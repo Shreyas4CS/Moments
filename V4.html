@@ -2513,44 +2513,41 @@ document.addEventListener('click', (e) => {
 
 // ── PERSISTENCE: save/load user data (descriptors + metadata) ──
 // Note: Blob URLs are session-specific. We store base64 data URLs for persistence.
-// Save is intentionally deferred via setTimeout so it never blocks UI interactions.
-// The INP (Interaction to Next Paint) score stays clean.
 function saveCurrentUserData() {
   if (!currentUser) return;
-  setTimeout(() => {
-    const saveable = {
-      people: {},
-      allPhotos: [],
-      palIdx,
-      photoCounter,
-      favorites: Array.from(favoriteSet),
+  const saveable = {
+    people: {},
+    allPhotos: [],
+    palIdx,
+    photoCounter,
+    favorites: Array.from(favoriteSet),
+  };
+  // Convert people data — store images as {url, date, id, personName}
+  for (const [name, data] of Object.entries(DB.people)) {
+    saveable.people[name] = {
+      color: data.color,
+      bgColor: data.bgColor,
+      initials: data.initials,
+      descriptors: data.descriptors || [],
+      images: data.images.map(ph => ({
+        url: ph.url,
+        dateStr: ph.date ? ph.date.toISOString() : new Date().toISOString(),
+        id: ph.id,
+        personName: ph.personName,
+      })),
     };
-    for (const [name, data] of Object.entries(DB.people)) {
-      saveable.people[name] = {
-        color: data.color,
-        bgColor: data.bgColor,
-        initials: data.initials,
-        descriptors: data.descriptors || [],
-        images: data.images.map(ph => ({
-          url: ph.url,
-          dateStr: ph.date ? ph.date.toISOString() : new Date().toISOString(),
-          id: ph.id,
-          personName: ph.personName,
-        })),
-      };
-    }
-    saveable.allPhotos = DB.allPhotos.map(ph => ({
-      url: ph.url,
-      dateStr: ph.date ? ph.date.toISOString() : new Date().toISOString(),
-      id: ph.id,
-      personName: ph.personName,
-    }));
-    try {
-      setUserData(currentUser, saveable);
-    } catch(e) {
-      console.warn('Save failed (storage full?):', e);
-    }
-  }, 0);
+  }
+  saveable.allPhotos = DB.allPhotos.map(ph => ({
+    url: ph.url,
+    dateStr: ph.date ? ph.date.toISOString() : new Date().toISOString(),
+    id: ph.id,
+    personName: ph.personName,
+  }));
+  try {
+    setUserData(currentUser, saveable);
+  } catch(e) {
+    console.warn('Save failed (storage full?):', e);
+  }
 }
 
 function loadUserData() {
@@ -2689,36 +2686,25 @@ function pvDeletePhoto() {
   if (!data) return;
   const reversed = data.images.slice().reverse();
   const ph = reversed[pvIndex];
-  if (!ph) return;
-
-  // Use a non-blocking confirm approach — show confirm then yield to browser
-  if (!confirm('Delete this photo from ' + pvAlbumName + "'s album?")) return;
-
-  // 1. Do the data mutation synchronously (fast — just array filter)
+  if (!confirm('Delete this photo from ' + pvAlbumName + '\'s album?')) return;
+  // Remove from person images
   data.images = data.images.filter(p => p.id !== ph.id);
+  // Remove from allPhotos
   DB.allPhotos = DB.allPhotos.filter(p => p.id !== ph.id);
   favoriteSet.delete(ph.id);
-
-  // 2. Update UI on next frame (don't block input handling)
-  requestAnimationFrame(() => {
-    if (!data.images.length) {
-      closePV();
-      updateAlbumUI(pvAlbumName);
-    } else {
-      pvIndex = Math.min(pvIndex, data.images.length - 1);
-      renderPV();
-      updateAlbumUI(pvAlbumName);
-    }
-    showToast('Photo deleted', 'Removed from album.', 'ok');
-
-    // 3. Defer heavy re-renders + localStorage write to next idle slot
-    setTimeout(() => {
-      renderTimeline();
-      renderSidebar();
-      renderHighlights();
-      if (currentUser) saveCurrentUserData();
-    }, 0);
-  });
+  if (currentUser) saveCurrentUserData();
+  if (!data.images.length) {
+    closePV();
+    updateAlbumUI(pvAlbumName);
+    renderTimeline(); renderSidebar(); renderHighlights();
+    return;
+  }
+  // Adjust index
+  pvIndex = Math.min(pvIndex, data.images.length - 1);
+  renderPV();
+  updateAlbumUI(pvAlbumName);
+  renderTimeline(); renderSidebar(); renderHighlights();
+  showToast('Photo deleted', 'Removed from album.', 'ok');
 }
 
 // Tap outside image to close
