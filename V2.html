@@ -257,44 +257,6 @@ nav::after{
 .album-empty{text-align:center;padding:60px 20px;color:var(--text3);grid-column:1/-1}
 .album-empty svg{width:44px;height:44px;margin:0 auto 14px;opacity:.25;display:block}
 
-
-/* ── AUTO-SORT UPLOAD ZONE ── */
-.dz-container{margin:16px 28px;flex-shrink:0}
-.autosort-zone{
-  border-radius:var(--r2)!important;
-  border-top-left-radius:var(--r2)!important;
-  border-color:rgba(6,214,160,.4)!important;
-  background:linear-gradient(145deg,#f0fff9,#eafff5)!important;
-}
-.autosort-zone:hover,.autosort-zone.drag{
-  border-color:var(--green)!important;
-  background:rgba(6,214,160,.07)!important;
-}
-.autosort-icon-wrap{
-  background:linear-gradient(135deg,rgba(6,214,160,.14),rgba(76,201,240,.14))!important;
-}
-.autosort-zone:hover .autosort-icon-wrap,.autosort-zone.drag .autosort-icon-wrap{
-  background:linear-gradient(135deg,rgba(6,214,160,.26),rgba(76,201,240,.24))!important;
-}
-.autosort-chip-active{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:11px;font-weight:700;padding:3px 12px;
-  border-radius:50px;border:1.5px solid var(--border);
-  color:var(--text3);transition:all .35s;
-}
-.autosort-chip-active.ready{
-  color:var(--green);border-color:rgba(6,214,160,.5);background:rgba(6,214,160,.08);
-}
-.uchip-dot{
-  width:7px;height:7px;border-radius:50%;background:var(--text3);
-  flex-shrink:0;transition:background .35s;
-}
-.autosort-chip-active.ready .uchip-dot{
-  background:var(--green);
-  animation:dotPulse 1.6s ease-in-out infinite;
-}
-@keyframes dotPulse{0%,100%{box-shadow:0 0 0 0 rgba(6,214,160,.5)}50%{box-shadow:0 0 0 5px rgba(6,214,160,0)}}
-@media(max-width:768px){.dz-container{margin:10px 12px}}
 /* ── UPLOAD / DROP ZONE ── */
 .upload-zone{
   border:2px dashed var(--border2);border-radius:var(--r2);
@@ -447,9 +409,21 @@ nav::after{
 .atb-status.trained{color:var(--green)}
 footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1a1d3a 100%);position:relative;overflow:hidden;z-index:20}
 .ft-rainbow{height:3px;background:linear-gradient(90deg,#4361ee,#7b2ff7,#f72585,#ffbe0b,#06d6a0,#4cc9f0,#4361ee);background-size:200%;animation:rainbowShift 3s linear infinite}
-.ft-inner-minimal{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;padding:10px 28px;font-size:12px;font-weight:600;color:rgba(255,255,255,.45)}
-.ft-cogno-link{color:rgba(255,255,255,.75);text-decoration:none;font-weight:700;transition:color .2s}
-.ft-cogno-link:hover{color:#ffbe0b}
+.ft-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 380px 100px at 20% 50%,rgba(67,97,238,.18) 0%,transparent 70%),radial-gradient(ellipse 280px 90px at 80% 50%,rgba(247,37,133,.13) 0%,transparent 70%)}
+.ft-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;padding:14px 28px;gap:18px;flex-wrap:wrap}
+.ft-brand{display:flex;align-items:center;gap:9px}
+.ft-logo{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#ffbe0b,#f97316);display:flex;align-items:center;justify-content:center;font-family:'Righteous',sans-serif;font-size:14px;color:#fff;animation:wiggle 3.5s ease-in-out infinite;box-shadow:0 3px 12px rgba(255,190,11,.35)}
+.ft-name{font-family:'Righteous',sans-serif;font-size:13px;color:#fff;font-weight:400}
+.ft-name span{font-size:10px;color:rgba(255,255,255,.45);display:block;letter-spacing:.5px}
+.ft-center{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center}
+.ft-tag{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:1px}
+.ft-chips{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.ft-chip{font-size:10.5px;font-weight:700;padding:3px 11px;border-radius:50px;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.65);background:rgba(255,255,255,.05);transition:all .2s;cursor:default}
+.ft-chip:hover{background:rgba(255,255,255,.12);color:#fff}
+.ft-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.ft-love{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:5px}
+.ft-heart{color:#f72585;animation:wiggle 1.8s ease-in-out infinite;display:inline-block}
+.ft-copy{font-size:10.5px;color:rgba(255,255,255,.38);font-weight:600}
 
 /* ── AUTO-SORT MATCH OVERLAY ── */
 @keyframes arcDraw{from{stroke-dashoffset:164}to{stroke-dashoffset:var(--arc-target)}}
@@ -613,7 +587,9 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
   .asort-actions{padding:0 16px 16px;gap:8px}
 
   /* FOOTER */
-  .ft-inner-minimal{padding:8px 14px}
+  .ft-inner{padding:12px 14px;gap:10px;flex-direction:column;align-items:flex-start}
+  .ft-center{align-items:flex-start;text-align:left}
+  .ft-right{align-items:flex-start}
 }
 
 /* ── Large phone (≤ 480px) ── */
@@ -640,7 +616,8 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
 
   .album-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
 
-
+  .ft-chips{gap:5px}
+  .ft-chip{font-size:10px;padding:2px 8px}
 }
 
 /* ── Small phone (≤ 360px) ── */
@@ -677,349 +654,10 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
   .toast{right:12px;bottom:16px;min-width:240px;padding:12px 14px}
 }
 
-
-/* ── LOGIN / AUTH STYLES — LIGHT & BRIGHT ── */
-@keyframes authBgFloat{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes authBlobA{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.08)}66%{transform:translate(-20px,20px) scale(.95)}}
-@keyframes authBlobB{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(-50px,25px) scale(1.06)}70%{transform:translate(30px,-15px) scale(.97)}}
-@keyframes authBlobC{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(25px,35px) scale(1.05)}}
-@keyframes authCardIn{from{opacity:0;transform:translateY(32px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes authLogoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-
-#authOverlay{
-  position:fixed;inset:0;z-index:1000;
-  background:#f0f4ff;
-  display:flex;align-items:center;justify-content:center;
-  overflow:auto;padding:20px;
-}
-#authOverlay.hidden{display:none}
-
-/* Decorative blobs */
-.auth-orbs{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.auth-orb{position:absolute;border-radius:50%}
-.auth-orb:nth-child(1){
-  width:600px;height:600px;top:-180px;left:-160px;
-  background:radial-gradient(circle,rgba(99,102,241,.18) 0%,rgba(139,92,246,.1) 50%,transparent 70%);
-  animation:authBlobA 9s ease-in-out infinite;
-}
-.auth-orb:nth-child(2){
-  width:500px;height:500px;bottom:-140px;right:-120px;
-  background:radial-gradient(circle,rgba(236,72,153,.15) 0%,rgba(249,115,22,.09) 50%,transparent 70%);
-  animation:authBlobB 11s ease-in-out infinite;
-}
-.auth-orb:nth-child(3){
-  width:340px;height:340px;top:40%;left:55%;
-  background:radial-gradient(circle,rgba(6,214,160,.13) 0%,rgba(76,201,240,.08) 50%,transparent 70%);
-  animation:authBlobC 7s ease-in-out infinite;
-}
-
-/* Floating decorative dots */
-.auth-orbs::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(99,102,241,.15) 1.5px,transparent 1.5px);
-  background-size:32px 32px;
-}
-
-/* Main card */
-.auth-card{
-  width:440px;max-width:96vw;
-  background:#fff;
-  border:1.5px solid rgba(99,102,241,.15);
-  border-radius:28px;
-  padding:40px 40px 32px;
-  box-shadow:0 8px 40px rgba(99,102,241,.12),0 2px 8px rgba(0,0,0,.06),0 32px 60px rgba(139,92,246,.08);
-  position:relative;z-index:1;
-  animation:authCardIn .5s cubic-bezier(.34,1.56,.64,1);
-}
-
-
-
-
-/* Logo area */
-.auth-logo-area{text-align:center;margin-bottom:30px;animation:authLogoFloat 3s ease-in-out infinite}
-.auth-moments{
-  font-family:'Pacifico',cursive;font-size:40px;font-weight:400;
-  background:linear-gradient(110deg,#f59e0b 0%,#f97316 22%,#ec4899 50%,#8b5cf6 78%,#4361ee 100%);
-  background-size:250% auto;
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  animation:momentsShimmer 5s ease-in-out infinite;
-  filter:drop-shadow(0 2px 10px rgba(236,72,153,.2));
-  display:block;margin-bottom:6px;line-height:1.1;
-}
-.auth-by{
-  font-size:13px;color:#6b7280;font-weight:600;letter-spacing:.3px;
-  display:flex;align-items:center;justify-content:center;gap:5px;
-}
-.auth-logo-img{height:20px;width:auto;vertical-align:middle;opacity:.85}
-.auth-logo-fallback{
-  display:inline-flex;align-items:center;gap:4px;
-  font-family:'Righteous',sans-serif;font-size:13px;
-  color:#4361ee;letter-spacing:.3px;font-weight:400;
-}
-
-/* Tabs */
-.auth-tabs{
-  display:flex;gap:4px;margin-bottom:26px;
-  background:#f3f4f6;border-radius:14px;padding:4px;
-  border:none;
-}
-.auth-tab{
-  flex:1;height:36px;background:transparent;border:none;
-  color:#6b7280;font-family:'Nunito',sans-serif;font-size:13.5px;font-weight:700;
-  cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);border-radius:10px;
-}
-.auth-tab.active{
-  background:#fff;color:#4361ee;
-  box-shadow:0 2px 10px rgba(67,97,238,.15),0 1px 3px rgba(0,0,0,.08);
-}
-.auth-tab:not(.active):hover{color:#374151;background:rgba(255,255,255,.5)}
-
-/* Fields */
-.auth-field{margin-bottom:16px}
-.auth-field label{
-  display:block;font-size:12px;font-weight:800;
-  color:#374151;letter-spacing:.4px;text-transform:uppercase;margin-bottom:7px;
-}
-.auth-input-wrap{position:relative}
-.auth-input-icon{
-  position:absolute;left:13px;top:50%;transform:translateY(-50%);
-  color:#9ca3af;pointer-events:none;
-}
-.auth-input{
-  width:100%;height:46px;
-  background:#f9fafb;
-  border:2px solid #e5e7eb;border-radius:13px;
-  color:#111827;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;
-  padding:0 14px 0 40px;outline:none;transition:all .22s;
-}
-.auth-input:focus{
-  border-color:#4361ee;background:#fff;
-  box-shadow:0 0 0 4px rgba(67,97,238,.1);
-}
-.auth-input::placeholder{color:#9ca3af;font-weight:500}
-
-/* Submit button */
-.auth-btn{
-  width:100%;height:48px;border-radius:50px;border:none;margin-top:8px;
-  background:linear-gradient(135deg,#4361ee 0%,#7b2ff7 60%,#ec4899 100%);
-  background-size:200%;
-  color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;
-  cursor:pointer;
-  box-shadow:0 6px 24px rgba(67,97,238,.35);
-  transition:all .25s cubic-bezier(.34,1.56,.64,1);
-  letter-spacing:.3px;
-}
-.auth-btn:hover{
-  transform:translateY(-2px) scale(1.01);
-  box-shadow:0 10px 32px rgba(67,97,238,.45);
-  background-position:right center;
-}
-.auth-btn:active{transform:translateY(0) scale(.99)}
-
-/* Error */
-.auth-err{
-  font-size:12.5px;color:#ef4444;font-weight:700;
-  text-align:center;min-height:18px;margin-top:10px;
-  display:flex;align-items:center;justify-content:center;gap:5px;
-}
-
-/* Divider */
-.auth-divider{
-  display:flex;align-items:center;gap:12px;margin:18px 0 4px;
-}
-.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:#e5e7eb}
-.auth-divider span{font-size:11.5px;color:#9ca3af;font-weight:700;white-space:nowrap}
-
-/* Footer */
-.auth-footer{
-  text-align:center;margin-top:20px;font-size:12px;
-  color:#9ca3af;font-weight:600;
-  padding-top:18px;border-top:1px solid #f3f4f6;
-}
-.auth-footer a{color:#4361ee;text-decoration:none;font-weight:700;transition:color .15s}
-.auth-footer a:hover{color:#7b2ff7}
-
-/* Welcome badge */
-.auth-welcome-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  background:linear-gradient(135deg,rgba(67,97,238,.08),rgba(123,47,247,.08));
-  border:1.5px solid rgba(67,97,238,.15);
-  border-radius:50px;padding:5px 14px;margin-bottom:14px;
-  font-size:12px;font-weight:700;color:#4361ee;
-}
-
-/* Nav user pill */
-.nav-user-pill{
-  display:flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:50px;
-  background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);
-  color:#fff;font-family:'Nunito',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;
-  transition:all .2s;position:relative;
-}
-.nav-user-pill:hover{background:rgba(255,255,255,.18)}
-.nav-user-dot{width:8px;height:8px;border-radius:50%;background:#06d6a0;flex-shrink:0}
-.nav-user-menu{
-  position:absolute;top:calc(100% + 8px);right:0;background:var(--surface);
-  border:1.5px solid var(--border);border-radius:14px;padding:6px;
-  min-width:160px;box-shadow:0 12px 40px rgba(0,0,0,.15);z-index:500;
-  display:none;animation:fadeUp .18s ease;
-}
-.nav-user-pill:focus-within .nav-user-menu,
-.nav-user-pill.open .nav-user-menu{display:block}
-.nav-user-menu-item{
-  padding:9px 12px;border-radius:9px;font-size:13px;font-weight:700;color:var(--text2);
-  cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s;
-}
-.nav-user-menu-item:hover{background:var(--surface3);color:var(--text)}
-.nav-user-menu-item.danger{color:#f87171}
-.nav-user-menu-item.danger:hover{background:#fef2f2;color:#dc2626}
-
-/* ── ALBUM photo viewer / carousel overlay ── */
-#photoViewer{
-  position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:800;
-  display:flex;align-items:center;justify-content:center;
-}
-#photoViewer.hidden{display:none}
-.pv-img-wrap{position:relative;max-width:90vw;max-height:90vh;display:flex;align-items:center;justify-content:center}
-.pv-img-wrap img{max-width:85vw;max-height:85vh;border-radius:12px;display:block;object-fit:contain;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-.pv-close{position:fixed;top:18px;right:18px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:all .18s;z-index:10}
-.pv-close:hover{background:rgba(255,255,255,.25)}
-.pv-arrow{position:fixed;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:all .2s;z-index:10}
-.pv-arrow:hover{background:rgba(255,255,255,.22);transform:translateY(-50%) scale(1.08)}
-.pv-arrow.left{left:18px}
-.pv-arrow.right{right:18px}
-.pv-actions{
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-  display:flex;gap:10px;z-index:10;
-}
-.pv-action-btn{
-  height:40px;padding:0 18px;border-radius:50px;border:1.5px solid rgba(255,255,255,.22);
-  background:rgba(255,255,255,.1);color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;
-  cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .2s;backdrop-filter:blur(6px);
-}
-.pv-action-btn:hover{background:rgba(255,255,255,.22)}
-.pv-action-btn.fav-active{background:rgba(247,37,133,.25);border-color:rgba(247,37,133,.5);color:#f72585}
-.pv-action-btn.del{border-color:rgba(247,37,133,.35)}
-.pv-action-btn.del:hover{background:rgba(247,37,133,.2);color:#f72585}
-.pv-info{
-  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
-  background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.15);border-radius:50px;
-  padding:6px 18px;color:rgba(255,255,255,.8);font-size:12.5px;font-weight:700;
-  backdrop-filter:blur(6px);white-space:nowrap;
-}
-
-/* Album photo favorite badge */
-.album-photo .fav-badge{
-  position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;
-  background:rgba(247,37,133,.85);display:none;align-items:center;justify-content:center;
-  font-size:11px;
-}
-.album-photo.favorited .fav-badge{display:flex}
-.album-photo .del-badge{
-  position:absolute;top:6px;left:6px;width:24px;height:24px;border-radius:50%;
-  background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;cursor:pointer;
-  font-size:11px;opacity:0;transition:opacity .2s;
-}
-.album-photo:hover .del-badge{display:flex;opacity:1}
-
-/* Match description in auto-sort */
-.match-desc-card{
-  background:rgba(6,214,160,.07);border:1.5px solid rgba(6,214,160,.25);
-  border-radius:12px;padding:12px 16px;font-size:12.5px;line-height:1.6;
-  color:var(--text2);font-weight:600;margin-top:4px;
-}
-.match-desc-card strong{color:var(--text);font-weight:800}
-.match-desc-card.no-match{background:rgba(247,37,133,.07);border-color:rgba(247,37,133,.25);color:var(--text2)}
 </style>
 </head>
 <body>
 
-
-<!-- ══ AUTH OVERLAY ══ -->
-<div id="authOverlay">
-  <div class="auth-orbs">
-    <div class="auth-orb" style="width:500px;height:500px;top:-100px;left:-100px;background:rgba(67,97,238,.18);animation-delay:0s"></div>
-    <div class="auth-orb" style="width:400px;height:400px;bottom:-80px;right:-60px;background:rgba(247,37,133,.13);animation-delay:2s"></div>
-    <div class="auth-orb" style="width:300px;height:300px;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(123,47,247,.1);animation-delay:4s"></div>
-  </div>
-  <div class="auth-card">
-    <div class="auth-logo-area">
-      <span class="auth-moments">Moments</span>
-      <div class="auth-by">
-        <span>by</span>
-        <img src="cognospace_logo.png" alt="CognoSpace" class="auth-logo-img"
-          onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'"/>
-        <span class="auth-logo-fallback" style="display:none">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
-          CognoSpace
-        </span>
-      </div>
-    </div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="loginTab" onclick="switchAuthTab('login')">Sign In</button>
-      <button class="auth-tab" id="registerTab" onclick="switchAuthTab('register')">Create Account</button>
-    </div>
-    <!-- Login Form -->
-    <div id="loginForm">
-      <div class="auth-field">
-        <label>Username</label>
-        <div class="auth-input-wrap">
-          <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
-          <input class="auth-input" id="loginUser" type="text" placeholder="Enter your username" autocomplete="username"/>
-        </div>
-      </div>
-      <div class="auth-field">
-        <label>Password</label>
-        <div class="auth-input-wrap">
-          <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <input class="auth-input" id="loginPass" type="password" placeholder="Enter your password" autocomplete="current-password"/>
-        </div>
-      </div>
-      <div class="auth-err" id="loginErr">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none" id="loginErrIcon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span id="loginErrText"></span>
-      </div>
-      <button class="auth-btn" onclick="doLogin()">
-        Sign In &nbsp;→
-      </button>
-    </div>
-    <!-- Register Form -->
-    <div id="registerForm" style="display:none">
-      <div class="auth-field">
-        <label>Username</label>
-        <div class="auth-input-wrap">
-          <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
-          <input class="auth-input" id="regUser" type="text" placeholder="Choose a username" autocomplete="username"/>
-        </div>
-      </div>
-      <div class="auth-field">
-        <label>Password</label>
-        <div class="auth-input-wrap">
-          <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <input class="auth-input" id="regPass" type="password" placeholder="Min 4 characters" autocomplete="new-password"/>
-        </div>
-      </div>
-      <div class="auth-field">
-        <label>Confirm Password</label>
-        <div class="auth-input-wrap">
-          <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <input class="auth-input" id="regPass2" type="password" placeholder="Re-enter password" autocomplete="new-password"/>
-        </div>
-      </div>
-      <div class="auth-err" id="regErr">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none" id="regErrIcon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span id="regErrText"></span>
-      </div>
-      <button class="auth-btn" onclick="doRegister()">
-        Create Account &nbsp;→
-      </button>
-    </div>
-
-    <div class="auth-footer">
-      Designed &amp; Developed by <a href="https://www.cognospace.in" target="_blank">CognoSpace</a>
-    </div>
-
-  </div>
-</div>
 
 <!-- ══ NAV ══ -->
 <nav>
@@ -1027,7 +665,7 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
   <div class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
     <span></span><span></span><span></span>
   </div>
-  <a href="https://www.cognospace.in" target="_blank" class="nav-logo-area" style="text-decoration:none">
+  <div class="nav-logo-area">
     <span class="moments-by-text">Moments</span>
     <div class="cosmos-divider"></div>
     <div class="cogno-logo-wrap">
@@ -1043,7 +681,7 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
         <div class="cogno-name"><em></em></div>
       </div>
     </div>
-  </a>
+  </div>
 
   <div class="nav-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -1061,18 +699,6 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
     </button>
     <input type="file" id="navUploadInput" accept="image/*" style="display:none" onchange="handleNavUploadFile(this)"/>
     <input type="file" id="trainUploadInput" accept="image/*" style="display:none" onchange="handleTrainFile(this)"/>
-    <!-- User Pill -->
-    <div class="nav-user-pill" id="navUserPill" onclick="toggleUserMenu(this)">
-      <div class="nav-user-dot"></div>
-      <span id="navUserName">User</span>
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="nav-user-menu">
-        <div class="nav-user-menu-item" onclick="event.stopPropagation();doLogout()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Sign Out
-        </div>
-      </div>
-    </div>
   </div>
 </nav>
 
@@ -1095,7 +721,7 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
       Albums
     </div>
-    <div class="sb-item" id="sbFavourites" onclick="showView('favourites')">
+    <div class="sb-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
       Favourites
     </div>
@@ -1113,23 +739,13 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
     <!-- TIMELINE VIEW -->
     <div class="view active" id="timelineView">
       <div class="highlights-strip" id="highlightsStrip" style="display:none"></div>
-      <!-- Auto-sort only dropzone — no tabs, no training here -->
-      <div class="dz-container" id="dzContainer">
-        <div class="upload-zone autosort-zone" id="dropzoneSort">
-          <input type="file" accept="image/*" multiple onchange="handleDropzoneSortFiles(this.files)"/>
-          <div class="upload-icon-wrap autosort-icon-wrap">
-            <svg class="usv" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          </div>
-          <h3>Drop photos to auto-sort</h3>
-          <p>Upload any photo — the AI matches it to a trained person and moves it into their album instantly.</p>
-          <div class="upload-chips">
-            <span class="uchip autosort-chip-active" id="dzSortChipStatus">
-              <span class="uchip-dot"></span>
-              <span id="dzSortChipLabel">No albums trained yet</span>
-            </span>
-            <span class="uchip" style="color:var(--text3);border-color:var(--border)">Use navbar to train people first</span>
-          </div>
+      <div class="upload-zone" id="dropzone">
+        <input type="file" accept="image/*" multiple onchange="handleDropzoneFiles(this.files)"/>
+        <div class="upload-icon-wrap">
+          <svg class="usv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         </div>
+        <h3>Drop photos to train face recognition</h3>
+        <p>Upload photos here to train a person. Use the navbar Upload button to auto-sort trained photos.</p>
       </div>
       <div id="timelineContent"></div>
       <div class="empty" id="timelineEmpty" style="display:none">
@@ -1182,24 +798,6 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
         <span class="atb-status" id="albumTrainStatus">0 / 5 photos</span>
       </div>
       <div class="album-grid" id="albumGrid"></div>
-    </div>
-
-    <!-- FAVOURITES VIEW -->
-    <div class="view" id="favouritesView">
-      <div style="padding:22px 28px 0">
-        <div class="people-view-header">
-          <div class="view-title">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="#f72585" stroke="#f72585" stroke-width="1.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-            Favourites
-          </div>
-        </div>
-        <div class="timeline-grid" id="favGrid" style="padding-top:12px"></div>
-        <div class="empty" id="favEmpty" style="display:none">
-          <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
-          <h3>No favourites yet</h3>
-          <p>Open any photo in an album and tap the star to save it here.</p>
-        </div>
-      </div>
     </div>
 
   </main>
@@ -1328,38 +926,24 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
 <!-- ══ FOOTER ══ -->
 <footer>
   <div class="ft-rainbow"></div>
-  <div class="ft-inner-minimal">
-    <span>Designed &amp; Developed by <a href="https://www.cognospace.in" target="_blank" class="ft-cogno-link">CognoSpace</a></span>
+  <div class="ft-glow"></div>
+  <div class="ft-inner">
+    <div class="ft-brand">
+      <div class="ft-logo">C</div>
+      <div>
+        <div class="ft-name">CognoSpace<span>Experiential Learning</span></div>
+      </div>
+    </div>
+    <div class="ft-center">
+      <div class="ft-tag">✦ MOMENTS BY COGNOSPACE ✦</div>
+    </div>
+    <div class="ft-right">
+      <div class="ft-love">Made  <span class="ft-heart"></span> for Young Innovators</div>
+      <div class="ft-copy">© 2026 CognoSpace · All rights reserved </div>
+    </div>
   </div>
 </footer>
 
-
-<!-- ══ PHOTO VIEWER (album carousel) ══ -->
-<div id="photoViewer" class="hidden">
-  <div class="pv-arrow left" onclick="pvNavigate(-1)">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-  </div>
-  <div class="pv-img-wrap">
-    <img id="pvImg" src="" alt="photo"/>
-  </div>
-  <div class="pv-arrow right" onclick="pvNavigate(1)">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-  </div>
-  <div class="pv-close" onclick="closePV()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-  </div>
-  <div class="pv-info" id="pvInfo"></div>
-  <div class="pv-actions">
-    <button class="pv-action-btn" id="pvFavBtn" onclick="pvToggleFav()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-      Favourite
-    </button>
-    <button class="pv-action-btn del" onclick="pvDeletePhoto()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-      Delete
-    </button>
-  </div>
-</div>
 <script>
 // ════════════════════════════════════════════════════════
 //  face-api.js INTEGRATION — Real Neural Network Face Recognition
@@ -1507,25 +1091,7 @@ function showView(v,personName){
   }else if(v==='album'&&personName){
     document.getElementById('albumView').classList.add('active');
     openAlbum(personName);
-  }else if(v==='favourites'){
-    document.getElementById('favouritesView').classList.add('active');
-    document.getElementById('sbFavourites').classList.add('active');
-    renderFavouritesView();
   }
-}
-
-function renderFavouritesView(){
-  const grid=document.getElementById('favGrid');
-  const empty=document.getElementById('favEmpty');
-  const favPhotos=DB.allPhotos.filter(ph=>favoriteSet.has(ph.id));
-  if(!favPhotos.length){grid.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
-  grid.innerHTML=favPhotos.map((ph,i)=>`
-    <div class="timeline-photo" style="animation-delay:${i*.04}s" onclick="openPhotoFullscreen('${ph.url}','${ph.personName||''}')">
-      <img src="${ph.url}" alt="${ph.personName||'photo'}" loading="lazy"/>
-      ${ph.personName?`<div class="photo-person-tag">${ph.personName}</div>`:''}
-      <div class="photo-check" style="background:#f72585"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
-    </div>`).join('');
 }
 
 // ════════════════════════════════════════════════════════
@@ -1545,51 +1111,10 @@ function handleNavUploadFile(input){
   runAutoSort(file);
 }
 
-// ── Auto-sort dropzone (only dropzone — no training here) ──
-const dzSort=document.getElementById('dropzoneSort');
-dzSort.addEventListener('dragover',e=>{e.preventDefault();dzSort.classList.add('drag');});
-dzSort.addEventListener('dragleave',()=>dzSort.classList.remove('drag'));
-dzSort.addEventListener('drop',e=>{e.preventDefault();dzSort.classList.remove('drag');handleDropzoneSortFiles(e.dataTransfer.files);});
-
-// Update the live status chip: shows how many people are ready for auto-sort
-function updateSortChip(){
-  const trained=Object.values(DB.people).filter(d=>(d.descriptors||[]).length>=4).length;
-  const inProgress=Object.values(DB.people).filter(d=>(d.descriptors||[]).length>0&&(d.descriptors||[]).length<4).length;
-  const chip=document.getElementById('dzSortChipStatus');
-  const lbl=document.getElementById('dzSortChipLabel');
-  const dot=chip?chip.querySelector('.uchip-dot'):null;
-  if(!chip||!lbl)return;
-  if(trained>0){
-    chip.className='autosort-chip-active ready';
-    chip.style.color='';chip.style.borderColor='';
-    lbl.style.color='';
-    if(dot){dot.style.background='';}
-    lbl.textContent=`${trained} person${trained!==1?'s':''} ready — drop to auto-sort ⚡`;
-  }else if(inProgress>0){
-    chip.className='autosort-chip-active';
-    chip.style.color='var(--amber)';chip.style.borderColor='rgba(255,190,11,.45)';
-    chip.style.background='rgba(255,190,11,.07)';
-    lbl.style.color='var(--amber)';
-    if(dot){dot.style.background='var(--amber)';}
-    lbl.textContent=`${inProgress} person${inProgress!==1?'s':''} in training — need 4+ photos`;
-  }else{
-    chip.className='autosort-chip-active';
-    chip.style.color='';chip.style.borderColor='';chip.style.background='';
-    lbl.style.color='';
-    if(dot){dot.style.background='';}
-    lbl.textContent='No albums trained yet';
-  }
-}
-
-async function handleDropzoneSortFiles(files){
-  if(!files||!files.length) return;
-  const trained=Object.values(DB.people).filter(d=>(d.descriptors||[]).length>=4).length;
-  if(!trained){
-    showToast('No trained albums!','Train at least 4 photos of a person first using "Train New Person" in the navbar.','error');
-    return;
-  }
-  runAutoSort(files[0]);
-}
+const dz=document.getElementById('dropzone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');handleDropzoneFiles(e.dataTransfer.files);});
 
 // ════════════════════════════════════════════════════════
 //  LANDMARK DRAWING (visual-only, for the training modal UI)
@@ -1838,8 +1363,7 @@ async function startAnalysis(){
         document.getElementById('matchCard').style.display='block';
         document.getElementById('nameWrap').style.display='none';
         document.getElementById('matchName').textContent=bestName;
-        const distDesc = bestDist < 0.3 ? 'Very strong' : bestDist < 0.45 ? 'Strong' : 'Good';
-        document.getElementById('matchScore').textContent=distDesc+' match · '+score+'% confidence · dist: '+bestDist.toFixed(3);
+        document.getElementById('matchScore').textContent='Confidence: '+score+'% — '+bestDist.toFixed(3)+' distance';
         document.getElementById('modalTitle').textContent='Recognised: '+bestName;
         document.getElementById('modalBadge').textContent='Auto-matched ✓';
         document.getElementById('ss-match').textContent='Matched to '+bestName+' (dist: '+bestDist.toFixed(3)+') ✓';
@@ -1913,7 +1437,6 @@ async function savePhoto(){
   closeModal();
   updateNavStat();renderTimeline();renderSidebar();renderHighlights();
   if(currentView==='album'&&currentAlbumName===pName)updateAlbumUI(pName);
-  if(currentUser)saveCurrentUserData();
   const isAuto=!!curMatch;
   const isNew=p.images.length===1;
   showToast(isAuto?'⚡ Auto-matched!':'✅ Photo saved!',
@@ -2031,16 +1554,12 @@ async function runAutoSort(file){
     banner.className='asort-status matched';
     document.getElementById('asortStatusIcon').textContent='✅';
     document.getElementById('asortStatusH').textContent=`Matched: ${bestMatch.name} (${simScore}% confidence)`;
-    const matchPercent = simScore;
-    const distLabel = bestDist < 0.3 ? 'Very high' : bestDist < 0.45 ? 'High' : 'Good';
-    const matchDesc = `${distLabel} confidence match. Neural distance: ${bestDist.toFixed(3)} out of max 0.55 threshold — ${matchPercent}% similarity. Trained on ${bestMatch.trainCount} photos.`;
-    document.getElementById('asortStatusP').textContent=matchDesc;
+    document.getElementById('asortStatusP').textContent=`Neural face recognition confirmed match. Euclidean distance: ${bestDist.toFixed(3)} (threshold: 0.55). Trained on ${bestMatch.trainCount} photos.`;
     document.getElementById('asortTitle').textContent='✅ Person Recognised!';
     document.getElementById('asortTopSub').textContent=`${bestMatch.name} · ${simScore}% match · dist ${bestDist.toFixed(3)}`;
     document.getElementById('asortGoBtn').style.display='';
     renderTimeline();renderSidebar();renderHighlights();
     if(currentView==='album'&&currentAlbumName===bestMatch.name)updateAlbumUI(bestMatch.name);
-    if(currentUser)saveCurrentUserData();
     confetti();
   } else {
     const maxTrain=people.length?Math.max(...people.map(([,d])=>d.descriptors.length)):0;
@@ -2153,10 +1672,9 @@ function updateAlbumUI(name){
     return;
   }
   grid.innerHTML=data.images.slice().reverse().map((ph,i)=>`
-    <div class="album-photo${favoriteSet.has(ph.id)?' favorited':''}" style="animation-delay:${i*.04}s" onclick="openAlbumPhoto('${name}',${i})">
+    <div class="album-photo" style="animation-delay:${i*.04}s" onclick="openPhotoFullscreen('${ph.url}','${name}')">
       <img src="${ph.url}" alt="${name}" loading="lazy"/>
       <div class="album-photo-date">${fmtDateShort(ph.date)}</div>
-      <div class="fav-badge">★</div>
     </div>`).join('');
 }
 function handleAlbumAdd(input){
@@ -2197,9 +1715,7 @@ function renderSidebar(){
       ${name}
     </div>`).join('')||'<div style="padding:6px 10px;font-size:12px;color:var(--text3);font-weight:600">No albums yet</div>';
 }
-function updateNavStat(){updateSortChip();}
-// Call on init
-window.addEventListener('DOMContentLoaded',()=>setTimeout(updateSortChip,500));
+function updateNavStat(){/* removed */}
 
 function handleSearch(q){
   if(!q.trim())return renderTimeline();
@@ -2237,7 +1753,7 @@ function confetti(){
 }
 
 // Init — start loading models immediately in background
-renderSidebar();renderTimeline();updateSortChip();
+renderSidebar();renderTimeline();
 loadFaceApi();
 
 
@@ -2255,335 +1771,6 @@ document.getElementById('sidebar').addEventListener('click',e=>{
   if(window.innerWidth<=768&&(e.target.closest('.sb-item')||e.target.closest('.sb-person'))){
     setTimeout(toggleSidebar,120);
   }
-});
-
-
-// ════════════════════════════════════════════════════════
-//  AUTH SYSTEM — localStorage-based with per-user data
-// ════════════════════════════════════════════════════════
-let currentUser = null;
-let favoriteSet = new Set(); // declared here so all functions can access it
-
-function getAuthStore() {
-  try { return JSON.parse(localStorage.getItem('moments_auth') || '{}'); } catch { return {}; }
-}
-function setAuthStore(data) {
-  localStorage.setItem('moments_auth', JSON.stringify(data));
-}
-function getUserData(username) {
-  try { return JSON.parse(localStorage.getItem('moments_user_' + username) || 'null'); } catch { return null; }
-}
-function setUserData(username, data) {
-  // Store serializable version (no Blob URLs — those can't be persisted across sessions)
-  localStorage.setItem('moments_user_' + username, JSON.stringify(data));
-}
-
-function switchAuthTab(tab) {
-  document.getElementById('loginForm').style.display = tab === 'login' ? '' : 'none';
-  document.getElementById('registerForm').style.display = tab === 'register' ? '' : 'none';
-  document.getElementById('loginTab').classList.toggle('active', tab === 'login');
-  document.getElementById('registerTab').classList.toggle('active', tab === 'register');
-  document.getElementById('loginErr').textContent = '';
-  document.getElementById('regErr').textContent = '';
-}
-
-function doLogin() {
-  const u = document.getElementById('loginUser').value.trim();
-  const p = document.getElementById('loginPass').value;
-  const err = document.getElementById('loginErr');
-  function setErr(msg){
-    const icon=document.getElementById('loginErrIcon');
-    const txt=document.getElementById('loginErrText');
-    txt.textContent=msg;
-    if(icon) icon.style.display=msg?'inline':'none';
-  }
-  if (!u || !p) { setErr('Please enter username and password.'); return; }
-  const auth = getAuthStore();
-  if (!auth[u]) { setErr('No account found. Please create one.'); return; }
-  if (auth[u] !== btoa(p)) { setErr('Incorrect password. Please try again.'); return; }
-  setErr('');
-  loginUser(u);
-}
-
-function doRegister() {
-  const u = document.getElementById('regUser').value.trim();
-  const p = document.getElementById('regPass').value;
-  const p2 = document.getElementById('regPass2').value;
-  const err = document.getElementById('regErr');
-  function setRegErr(msg){
-    const icon=document.getElementById('regErrIcon');
-    const txt=document.getElementById('regErrText');
-    txt.textContent=msg;
-    if(icon) icon.style.display=msg?'inline':'none';
-  }
-  if (!u || !p) { setRegErr('Username and password are required.'); return; }
-  if (u.length < 3) { setRegErr('Username must be at least 3 characters.'); return; }
-  if (p.length < 4) { setRegErr('Password must be at least 4 characters.'); return; }
-  if (p !== p2) { setRegErr('Passwords do not match.'); return; }
-  const auth = getAuthStore();
-  if (auth[u]) { setRegErr('Username already taken. Please try another.'); return; }
-  auth[u] = btoa(p);
-  setAuthStore(auth);
-  setRegErr('');
-  loginUser(u);
-}
-
-function loginUser(username) {
-  currentUser = username;
-  localStorage.setItem('moments_session', username);
-  document.getElementById('authOverlay').classList.add('hidden');
-  document.getElementById('navUserName').textContent = username;
-  // Load user's saved data
-  loadUserData();
-  showToast('Welcome back!', 'Signed in as <strong>' + username + '</strong>', 'ok');
-}
-
-function doLogout() {
-  // Save before logout
-  saveCurrentUserData();
-  currentUser = null;
-  localStorage.removeItem('moments_session');
-  // Reset DB
-  DB.people = {};
-  DB.allPhotos = [];
-  palIdx = 0;
-  photoCounter = 0;
-  renderTimeline(); renderSidebar(); renderHighlights();
-  document.getElementById('authOverlay').classList.remove('hidden');
-  document.getElementById('loginUser').value = '';
-  document.getElementById('loginPass').value = '';
-  document.getElementById('loginErr').textContent = '';
-  switchAuthTab('login');
-  toggleUserMenu(null, true); // close menu
-}
-
-function toggleUserMenu(el, forceClose) {
-  if (forceClose) {
-    document.getElementById('navUserPill').classList.remove('open');
-    return;
-  }
-  document.getElementById('navUserPill').classList.toggle('open');
-}
-
-// Close user menu on outside click
-document.addEventListener('click', (e) => {
-  const pill = document.getElementById('navUserPill');
-  if (pill && !pill.contains(e.target)) pill.classList.remove('open');
-});
-
-// ── PERSISTENCE: save/load user data (descriptors + metadata) ──
-// Note: Blob URLs are session-specific. We store base64 data URLs for persistence.
-function saveCurrentUserData() {
-  if (!currentUser) return;
-  const saveable = {
-    people: {},
-    allPhotos: [],
-    palIdx,
-    photoCounter,
-    favorites: Array.from(favoriteSet),
-  };
-  // Convert people data — store images as {url, date, id, personName}
-  for (const [name, data] of Object.entries(DB.people)) {
-    saveable.people[name] = {
-      color: data.color,
-      bgColor: data.bgColor,
-      initials: data.initials,
-      descriptors: data.descriptors || [],
-      images: data.images.map(ph => ({
-        url: ph.url,
-        dateStr: ph.date ? ph.date.toISOString() : new Date().toISOString(),
-        id: ph.id,
-        personName: ph.personName,
-      })),
-    };
-  }
-  saveable.allPhotos = DB.allPhotos.map(ph => ({
-    url: ph.url,
-    dateStr: ph.date ? ph.date.toISOString() : new Date().toISOString(),
-    id: ph.id,
-    personName: ph.personName,
-  }));
-  try {
-    setUserData(currentUser, saveable);
-  } catch(e) {
-    console.warn('Save failed (storage full?):', e);
-  }
-}
-
-function loadUserData() {
-  if (!currentUser) return;
-  const saved = getUserData(currentUser);
-  if (!saved) return;
-  DB.people = {};
-  DB.allPhotos = [];
-  palIdx = saved.palIdx || 0;
-  photoCounter = saved.photoCounter || 0;
-  favoriteSet = new Set(saved.favorites || []);
-  for (const [name, data] of Object.entries(saved.people || {})) {
-    DB.people[name] = {
-      color: data.color,
-      bgColor: data.bgColor,
-      initials: data.initials,
-      descriptors: (data.descriptors || []).map(d => Array.from(d)),
-      images: (data.images || []).map(ph => ({
-        url: ph.url,
-        date: new Date(ph.dateStr),
-        id: ph.id,
-        personName: ph.personName,
-      })),
-    };
-  }
-  DB.allPhotos = (saved.allPhotos || []).map(ph => ({
-    url: ph.url,
-    date: new Date(ph.dateStr),
-    id: ph.id,
-    personName: ph.personName,
-  }));
-  renderTimeline(); renderSidebar(); renderHighlights();
-}
-
-// Auto-save every 30s and on page unload
-setInterval(() => { if (currentUser) saveCurrentUserData(); }, 30000);
-window.addEventListener('beforeunload', () => { if (currentUser) saveCurrentUserData(); });
-
-// Check for existing session on load
-(function checkSession() {
-  const sess = localStorage.getItem('moments_session');
-  const auth = getAuthStore();
-  if (sess && auth[sess]) {
-    currentUser = sess;
-    document.getElementById('authOverlay').classList.add('hidden');
-    document.getElementById('navUserName').textContent = sess;
-    loadUserData();
-  }
-})();
-
-// ════════════════════════════════════════════════════════
-//  FAVOURITES
-// ════════════════════════════════════════════════════════
-function toggleFavorite(photoId) {
-  if (favoriteSet.has(photoId)) {
-    favoriteSet.delete(photoId);
-  } else {
-    favoriteSet.add(photoId);
-  }
-  if (currentUser) saveCurrentUserData();
-}
-
-// ════════════════════════════════════════════════════════
-//  PHOTO VIEWER (album carousel with arrow nav, delete, fav)
-// ════════════════════════════════════════════════════════
-let pvAlbumName = '';
-let pvIndex = 0;
-
-function openAlbumPhoto(albumName, index) {
-  pvAlbumName = albumName;
-  pvIndex = index;
-  renderPV();
-  document.getElementById('photoViewer').classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-  // keyboard nav
-  document.addEventListener('keydown', pvKeyHandler);
-}
-
-function closePV() {
-  document.getElementById('photoViewer').classList.add('hidden');
-  document.body.style.overflow = '';
-  document.removeEventListener('keydown', pvKeyHandler);
-}
-
-function pvKeyHandler(e) {
-  if (e.key === 'ArrowLeft') pvNavigate(-1);
-  else if (e.key === 'ArrowRight') pvNavigate(1);
-  else if (e.key === 'Escape') closePV();
-}
-
-function pvNavigate(dir) {
-  const data = DB.people[pvAlbumName];
-  if (!data || !data.images.length) return;
-  pvIndex = (pvIndex + dir + data.images.length) % data.images.length;
-  renderPV();
-}
-
-function renderPV() {
-  const data = DB.people[pvAlbumName];
-  if (!data || !data.images.length) { closePV(); return; }
-  // We display reversed so index 0 = most recent (match updateAlbumUI order)
-  const reversed = data.images.slice().reverse();
-  const ph = reversed[pvIndex];
-  document.getElementById('pvImg').src = ph.url;
-  const isFav = favoriteSet.has(ph.id);
-  const btn = document.getElementById('pvFavBtn');
-  btn.classList.toggle('fav-active', isFav);
-  btn.innerHTML = isFav
-    ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg> Favourite'
-    : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg> Favourite';
-  document.getElementById('pvInfo').textContent =
-    (pvIndex + 1) + ' / ' + reversed.length + '  ·  ' + fmtDateShort(ph.date);
-}
-
-function pvToggleFav() {
-  const data = DB.people[pvAlbumName];
-  if (!data) return;
-  const reversed = data.images.slice().reverse();
-  const ph = reversed[pvIndex];
-  toggleFavorite(ph.id);
-  renderPV();
-  updateAlbumUI(pvAlbumName);
-}
-
-function pvDeletePhoto() {
-  const data = DB.people[pvAlbumName];
-  if (!data) return;
-  const reversed = data.images.slice().reverse();
-  const ph = reversed[pvIndex];
-  if (!confirm('Delete this photo from ' + pvAlbumName + '\'s album?')) return;
-  // Remove from person images
-  data.images = data.images.filter(p => p.id !== ph.id);
-  // Remove from allPhotos
-  DB.allPhotos = DB.allPhotos.filter(p => p.id !== ph.id);
-  favoriteSet.delete(ph.id);
-  if (currentUser) saveCurrentUserData();
-  if (!data.images.length) {
-    closePV();
-    updateAlbumUI(pvAlbumName);
-    renderTimeline(); renderSidebar(); renderHighlights();
-    return;
-  }
-  // Adjust index
-  pvIndex = Math.min(pvIndex, data.images.length - 1);
-  renderPV();
-  updateAlbumUI(pvAlbumName);
-  renderTimeline(); renderSidebar(); renderHighlights();
-  showToast('Photo deleted', 'Removed from album.', 'ok');
-}
-
-// Tap outside image to close
-document.getElementById('photoViewer').addEventListener('click', function(e) {
-  if (e.target === this) closePV();
-});
-
-
-// ── Swipe support for photo viewer (mobile) ──
-(function(){
-  let touchStartX=0,touchStartY=0;
-  const pv=document.getElementById('photoViewer');
-  pv.addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;},{passive:true});
-  pv.addEventListener('touchend',e=>{
-    const dx=e.changedTouches[0].clientX-touchStartX;
-    const dy=e.changedTouches[0].clientY-touchStartY;
-    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){pvNavigate(dx<0?1:-1);}
-  },{passive:true});
-})();
-
-// Enter key support on auth inputs
-['loginUser','loginPass'].forEach(id=>{
-  const el=document.getElementById(id);
-  if(el) el.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-});
-['regUser','regPass','regPass2'].forEach(id=>{
-  const el=document.getElementById(id);
-  if(el) el.addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
 });
 
 </script>
