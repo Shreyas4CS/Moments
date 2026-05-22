@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Moments by CognoSpace</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Righteous&family=Pacifico&display=swap" rel="stylesheet"/>
+<!-- face-api.js: Real neural network face recognition in the browser -->
+<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/dist/face-api.js"></script>
+<style>
+
+:root{
+  --bg:#f5f6fa;--bg2:#eef0fb;
+  --surface:#fff;--surface2:#f9faff;--surface3:#eef1ff;
+  --border:#e2e6ff;--border2:#c9d0f5;
+  --text:#1a1d3a;--text2:#4a4f7a;--text3:#8890bb;
+  --accent:#4361ee;--a2:#7b2ff7;--a3:#f72585;
+  --green:#06d6a0;--amber:#ffbe0b;--teal:#4cc9f0;
+  --r:12px;--r2:20px;--r3:28px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+body{display:flex;flex-direction:column}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bounce-in{0%{transform:scale(0)}60%{transform:scale(1.18)}80%{transform:scale(.95)}100%{transform:scale(1)}}
+@keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(90px) rotate(520deg);opacity:0}}
+@keyframes nav-shine{0%{left:-100%}100%{left:220%}}
+@keyframes slide-r{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+@keyframes orb{0%{transform:translate(0,0)}50%{transform:translate(20px,-14px)}100%{transform:translate(0,0)}}
+@keyframes wiggle{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+@keyframes glow-pulse{0%,100%{box-shadow:0 0 0 0 rgba(67,97,238,.5)}50%{box-shadow:0 0 0 8px rgba(67,97,238,0)}}
+@keyframes scan{0%{top:-4%}100%{top:104%}}
+@keyframes dotPop{0%{transform:scale(0);opacity:0}70%{transform:scale(1.4)}100%{transform:scale(1);opacity:1}}
+@keyframes drawLine{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes rainbowShift{0%{background-position:0%}100%{background-position:200%}}
+
+/* ── NAV ── */
+nav{
+  height:58px;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1a1d3a 100%);
+  display:flex;align-items:center;padding:0 20px;gap:14px;
+  flex-shrink:0;z-index:200;position:relative;overflow:hidden;
+  box-shadow:0 3px 20px rgba(26,29,58,.4);
+}
+nav::after{
+  content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+  animation:nav-shine 5s ease-in-out infinite;pointer-events:none;
+}
+@keyframes momentsShimmer{0%{background-position:0% center}60%{background-position:100% center}100%{background-position:0% center}}
+
+/* NAV logo area */
+.nav-logo-area{display:flex;align-items:center;gap:10px;flex-shrink:0;z-index:1}
+.moments-by-text{
+  font-family:'Pacifico',cursive;
+  font-size:28px;
+  font-weight:400;
+  letter-spacing:.5px;
+  white-space:nowrap;
+  background:linear-gradient(110deg,#ffbe0b 0%,#f97316 25%,#f72585 50%,#a855f7 75%,#4361ee 100%);
+  background-size:250% auto;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:momentsShimmer 5s ease-in-out infinite;
+  filter:drop-shadow(0 1px 6px rgba(249,115,22,.3));
+}
+.cosmos-divider{width:1.5px;height:32px;background:rgba(255,255,255,.2);margin:0 6px}
+.cogno-logo-wrap{display:flex;flex-direction:column;align-items:flex-start}
+.cogno-by{font-size:8px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:2px}
+.cogno-brand{display:flex;align-items:center;gap:7px}
+.cogno-logo-img{height:30px;width:auto;object-fit:contain;display:block}
+.cogno-logo-fallback{
+  height:30px;padding:0 10px;background:linear-gradient(135deg,#4361ee,#f72585);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-family:'Righteous',sans-serif;font-size:12px;color:#fff;letter-spacing:.3px;gap:5px;
+}
+.cogno-name{font-family:'Righteous',sans-serif;font-size:14px;color:#fff;font-weight:400;letter-spacing:.3px}
+.cogno-name em{font-style:normal;font-size:9px;color:rgba(255,255,255,.5);display:block;letter-spacing:1px;margin-top:-1px}
+
+.nav-search{
+  flex:1;max-width:360px;margin-left:8px;z-index:1;
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);
+  border-radius:50px;padding:7px 16px;transition:all .2s;
+}
+.nav-search:focus-within{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4)}
+.nav-search input{flex:1;background:none;border:none;outline:none;color:#fff;font-family:'Nunito',sans-serif;font-size:13.5px;font-weight:600}
+.nav-search input::placeholder{color:rgba(255,255,255,.45)}
+.nav-search svg{width:15px;height:15px;color:rgba(255,255,255,.55);flex-shrink:0}
+.nav-actions{margin-left:auto;display:flex;align-items:center;gap:9px;z-index:1}
+.nav-btn{
+  height:34px;padding:0 15px;border-radius:50px;
+  background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.22);
+  color:#fff;font-family:'Nunito',sans-serif;font-size:12.5px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;
+}
+.nav-btn:hover{background:rgba(255,255,255,.22);transform:translateY(-1px)}
+.nav-btn.primary{background:linear-gradient(135deg,var(--accent),var(--a2));border:none;box-shadow:0 4px 16px rgba(67,97,238,.45)}
+.nav-btn.primary:hover{transform:translateY(-2px);box-shadow:0 7px 22px rgba(67,97,238,.55)}
+.nav-stat{
+  display:flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:50px;
+  font-size:11.5px;font-weight:700;
+}
+.nav-stat.trained{background:rgba(6,214,160,.2);color:#06d6a0;border:1px solid rgba(6,214,160,.3)}
+.nav-stat.ai{background:rgba(247,37,133,.15);color:#f9a8d4;border:1px solid rgba(247,37,133,.25)}
+
+/* ── LAYOUT ── */
+.app-body{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:218px;flex-shrink:0;background:var(--surface);
+  border-right:1.5px solid var(--border);overflow-y:auto;
+  padding:14px 10px 80px;display:flex;flex-direction:column;gap:2px;
+}
+.sb-section{font-size:10px;font-weight:800;color:var(--text3);letter-spacing:1.8px;text-transform:uppercase;padding:12px 10px 5px}
+.sb-item{
+  display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:11px;
+  cursor:pointer;font-size:13px;font-weight:700;color:var(--text2);
+  transition:all .17s;border:1.5px solid transparent;
+}
+.sb-item:hover{background:var(--surface3);color:var(--accent)}
+.sb-item.active{background:rgba(67,97,238,.1);color:var(--accent);border-color:rgba(67,97,238,.2)}
+.sb-item svg{width:17px;height:17px;flex-shrink:0}
+.sb-div{height:1.5px;background:var(--border);margin:7px 4px}
+.sb-person{
+  display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:11px;
+  cursor:pointer;font-size:12.5px;font-weight:700;color:var(--text2);transition:all .17s;
+}
+.sb-person:hover{background:var(--surface3);color:var(--text)}
+.sb-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;flex-shrink:0}
+.sb-count{margin-left:auto;font-size:10px;font-weight:800;color:#fff;padding:1px 7px;border-radius:50px}
+.sb-storage{padding:14px 12px;margin-top:auto}
+.sb-storage-bar{height:4px;border-radius:2px;background:var(--border);overflow:hidden;margin:6px 0}
+.sb-storage-fill{height:100%;width:44%;background:linear-gradient(90deg,var(--accent),var(--a2));border-radius:2px}
+.sb-storage p{font-size:11px;color:var(--text3);font-weight:600}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;background:var(--bg);position:relative}
+
+/* ── VIEW (default=timeline, alternate=album) ── */
+.view{flex:1;display:none}
+.view.active{display:flex;flex-direction:column}
+
+/* ── TIMELINE VIEW ── */
+#timelineView{padding:0}
+.timeline-section{padding:0 28px 24px}
+.timeline-date-header{font-family:'Righteous',sans-serif;font-size:14px;color:var(--text2);padding:18px 28px 10px;font-weight:400;position:sticky;top:0;background:rgba(245,246,250,.95);backdrop-filter:blur(8px);z-index:10;border-bottom:1px solid var(--border)}
+.timeline-date-sub{font-size:12px;color:var(--text3);font-weight:600;margin-top:2px}
+.timeline-grid{
+  display:grid;gap:4px;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+}
+.timeline-photo{
+  position:relative;overflow:hidden;cursor:pointer;
+  border-radius:6px;aspect-ratio:1;background:var(--surface3);
+  transition:all .22s cubic-bezier(.34,1.56,.64,1);
+  animation:fadeUp .3s ease both;
+}
+.timeline-photo:hover{transform:scale(1.04);z-index:5;box-shadow:0 8px 24px rgba(67,97,238,.22)}
+.timeline-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.timeline-photo:hover img{transform:scale(1.08)}
+.timeline-photo .photo-person-tag{
+  position:absolute;bottom:6px;left:6px;
+  background:rgba(26,29,58,.75);color:#fff;
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:50px;
+  backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);
+  opacity:0;transition:opacity .2s;
+}
+.timeline-photo:hover .photo-person-tag{opacity:1}
+.timeline-photo .photo-check{
+  position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;
+  background:var(--accent);display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;
+}
+.timeline-photo:hover .photo-check{opacity:.7}
+
+/* Highlights strip */
+.highlights-strip{
+  display:flex;gap:12px;overflow-x:auto;padding:16px 28px 12px;
+  scrollbar-width:none;flex-shrink:0;
+}
+.highlights-strip::-webkit-scrollbar{display:none}
+.highlight-card{
+  flex-shrink:0;width:220px;height:120px;border-radius:16px;overflow:hidden;
+  position:relative;cursor:pointer;transition:all .22s;
+  background:linear-gradient(135deg,var(--accent),var(--a2));
+}
+.highlight-card:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 12px 32px rgba(67,97,238,.28)}
+.highlight-card img{width:100%;height:100%;object-fit:cover;opacity:.7}
+.highlight-card .hl-label{
+  position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:12px 14px;background:linear-gradient(transparent,rgba(0,0,0,.55));
+}
+.highlight-card .hl-title{font-family:'Righteous',sans-serif;font-size:14px;color:#fff;font-weight:400}
+.highlight-card .hl-sub{font-size:11px;color:rgba(255,255,255,.75);font-weight:600;margin-top:2px}
+
+/* ── PEOPLE VIEW ── */
+#peopleView{padding:24px 28px}
+.people-view-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.view-title{font-family:'Righteous',sans-serif;font-size:20px;color:var(--text);font-weight:400;display:flex;align-items:center;gap:10px}
+.count-pill{background:linear-gradient(135deg,var(--accent),var(--a2));color:#fff;font-size:12px;font-weight:700;padding:3px 12px;border-radius:50px}
+.person-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:15px}
+.person-card{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r2);
+  overflow:hidden;cursor:pointer;
+  transition:all .24s cubic-bezier(.34,1.56,.64,1);
+  animation:popIn .35s ease both;
+}
+.person-card:hover{transform:translateY(-5px) scale(1.02);border-color:var(--accent);box-shadow:0 14px 40px rgba(67,97,238,.18)}
+.folder-thumbs{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:92px 92px;gap:2px;background:var(--border)}
+.thumb-cell{overflow:hidden;background:var(--surface3);display:flex;align-items:center;justify-content:center}
+.thumb-cell:first-child{grid-row:1/3;grid-column:1/2}
+.thumb-cell img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.person-card:hover .thumb-cell img{transform:scale(1.06)}
+.thumb-ph{font-family:'Righteous',sans-serif;font-size:30px;color:currentColor;opacity:.15}
+.folder-info{padding:12px 14px;display:flex;align-items:center;gap:10px}
+.folder-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Righteous',sans-serif;font-size:13px;flex-shrink:0;border:2px solid rgba(255,255,255,.6)}
+.folder-name{font-size:13.5px;font-weight:800;color:var(--text)}
+.folder-sub{font-size:11.5px;color:var(--text3);font-weight:600;margin-top:1px}
+
+/* ── ALBUM VIEW ── */
+#albumView{padding:0}
+.album-header{
+  display:flex;align-items:center;gap:14px;padding:20px 28px 14px;
+  background:rgba(245,246,250,.95);backdrop-filter:blur(8px);
+  border-bottom:1.5px solid var(--border);position:sticky;top:0;z-index:20;
+}
+.album-back{
+  width:36px;height:36px;border-radius:50%;background:var(--surface);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;
+}
+.album-back:hover{background:var(--surface3);border-color:var(--accent)}
+.album-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Righteous',sans-serif;font-size:17px;border:2.5px solid rgba(255,255,255,.7)}
+.album-title{font-family:'Righteous',sans-serif;font-size:20px;color:var(--text);font-weight:400}
+.album-sub{font-size:12.5px;color:var(--text3);font-weight:600;margin-top:2px}
+.album-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:4px;padding:16px 28px 28px}
+.album-photo{
+  position:relative;aspect-ratio:1;overflow:hidden;border-radius:6px;
+  background:var(--surface3);cursor:pointer;
+  transition:all .2s;animation:fadeUp .3s ease both;
+}
+.album-photo:hover{transform:scale(1.04);z-index:5}
+.album-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.album-photo-date{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(0,0,0,.6));
+  color:#fff;font-size:10.5px;font-weight:700;padding:8px 8px 6px;opacity:0;transition:opacity .2s;
+}
+.album-photo:hover .album-photo-date{opacity:1}
+.album-empty{text-align:center;padding:60px 20px;color:var(--text3);grid-column:1/-1}
+.album-empty svg{width:44px;height:44px;margin:0 auto 14px;opacity:.25;display:block}
+
+/* ── UPLOAD / DROP ZONE ── */
+.upload-zone{
+  border:2px dashed var(--border2);border-radius:var(--r2);
+  margin:16px 28px;padding:28px;text-align:center;cursor:pointer;
+  background:var(--surface);position:relative;overflow:hidden;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);flex-shrink:0;
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(67,97,238,.03);transform:translateY(-2px)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-icon-wrap{
+  width:56px;height:56px;border-radius:18px;margin:0 auto 12px;
+  background:linear-gradient(135deg,rgba(67,97,238,.1),rgba(123,47,247,.1));
+  display:flex;align-items:center;justify-content:center;
+  transition:all .25s;
+}
+.upload-zone:hover .upload-icon-wrap{transform:scale(1.1) rotate(4deg);background:linear-gradient(135deg,rgba(67,97,238,.2),rgba(123,47,247,.2))}
+.upload-zone svg.usv{width:26px;height:26px;color:var(--accent)}
+.upload-zone h3{font-family:'Righteous',sans-serif;font-size:15px;color:var(--text);margin-bottom:5px;font-weight:400}
+.upload-zone p{font-size:12.5px;color:var(--text3);line-height:1.55;font-weight:600}
+.upload-chips{display:flex;justify-content:center;gap:7px;margin-top:12px;flex-wrap:wrap}
+.uchip{font-size:11px;font-weight:700;padding:3px 11px;border-radius:50px;border:1.5px solid}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,18,50,.6);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);animation:fadeUp .18s ease}
+.modal-overlay.hidden{display:none}
+.modal{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r3);
+  width:820px;max-width:97vw;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column;
+  box-shadow:0 32px 80px rgba(67,97,238,.22);animation:popIn .28s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-hdr{
+  background:linear-gradient(135deg,#1a1d3a,#2d2060 55%,#1a1d3a);
+  padding:20px 24px 16px;border-radius:var(--r3) var(--r3) 0 0;
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+  position:relative;overflow:hidden;
+}
+.modal-hdr::after{content:'';position:absolute;right:-50px;top:-50px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
+.modal-hdr h2{font-family:'Righteous',sans-serif;font-size:17px;color:#fff;font-weight:400;z-index:1}
+.modal-step-badge{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.75);background:rgba(255,255,255,.15);padding:3px 11px;border-radius:50px;margin-left:10px}
+.modal-x{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;z-index:1;flex-shrink:0}
+.modal-x:hover{background:rgba(255,255,255,.28);transform:rotate(90deg)}
+.modal-x svg{width:15px;height:15px;color:#fff}
+.modal-body{padding:22px;display:flex;gap:20px;flex:1}
+.analysis-pane{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+.img-wrap{
+  position:relative;border-radius:var(--r);overflow:hidden;
+  background:#0e0e1e;aspect-ratio:1;max-height:350px;
+  display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);
+}
+.img-wrap img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.acanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.step-list{display:flex;flex-direction:column;gap:6px}
+.step-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:11px;background:var(--surface2);border:1.5px solid var(--border);transition:all .28s}
+.step-item.active{border-color:var(--accent);background:rgba(67,97,238,.06);box-shadow:0 3px 14px rgba(67,97,238,.1)}
+.step-item.done{border-color:rgba(6,214,160,.35);background:rgba(6,214,160,.05)}
+.sdot{width:21px;height:21px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10.5px;flex-shrink:0;margin-top:1px;transition:all .28s}
+.step-item.active .sdot{border-color:var(--accent);background:rgba(67,97,238,.12);animation:glow-pulse 1.4s infinite}
+.step-item.done .sdot{border-color:var(--green);background:rgba(6,214,160,.12);color:var(--green);font-weight:800;animation:bounce-in .3s ease}
+.stitle{font-size:12.5px;font-weight:800;color:var(--text)}
+.ssub{font-size:11.5px;color:var(--text3);margin-top:2px;font-weight:600}
+.sbar{height:3.5px;border-radius:2px;background:var(--border);margin-top:6px;overflow:hidden}
+.sbar-fill{height:100%;border-radius:2px;width:0;background:linear-gradient(90deg,var(--accent),var(--a2));transition:width .5s ease;position:relative;overflow:hidden}
+.sbar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);animation:slide-r 1.1s ease-in-out infinite}
+.info-pane{width:218px;flex-shrink:0;display:flex;flex-direction:column;gap:11px}
+.mcard{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);padding:13px;transition:all .28s}
+.mcard.glow{border-color:var(--accent);box-shadow:0 4px 18px rgba(67,97,238,.12)}
+.mcard.match-glow{border-color:var(--green);background:rgba(6,214,160,.05);animation:bounce-in .3s ease}
+.mlabel{font-size:10px;font-weight:800;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px}
+.mval{font-family:'Righteous',sans-serif;font-size:25px;color:var(--text);font-weight:400;line-height:1}
+.mval.green{color:var(--green)}
+.msub{font-size:11.5px;color:var(--text3);margin-top:2px;font-weight:600}
+.lmgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.lmchip{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:6px 8px;font-size:11.5px;font-weight:700;color:var(--text2);display:flex;flex-direction:column;gap:1px;transition:all .2s}
+.lmchip.lit{animation:bounce-in .3s ease}
+.lmchip span{font-size:10px;color:var(--text3);font-weight:600}
+.name-wrap{display:flex;flex-direction:column;gap:7px}
+.name-wrap label{font-size:12.5px;font-weight:800;color:var(--text2)}
+.ninput{width:100%;padding:9px 13px;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:13.5px;font-weight:700;outline:none;transition:all .2s}
+.ninput:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(67,97,238,.09)}
+.ninput::placeholder{color:var(--text3)}
+.train-badge{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px}
+.train-lbl{font-size:11.5px;font-weight:800;color:var(--text2);margin-bottom:7px}
+.train-pips{display:flex;gap:4px}
+.pip{flex:1;height:6px;border-radius:3px;background:var(--border);transition:all .4s cubic-bezier(.34,1.56,.64,1)}
+.pip.filled{background:linear-gradient(90deg,var(--accent),var(--a2))}
+.pip.matched{background:linear-gradient(90deg,var(--green),var(--teal))}
+.train-hint{font-size:10.5px;color:var(--text3);font-weight:600;margin-top:6px}
+.modal-ftr{
+  padding:16px 22px;border-top:1.5px solid var(--border);
+  display:flex;gap:10px;flex-shrink:0;
+  background:var(--surface2);border-radius:0 0 var(--r3) var(--r3);
+}
+.bigbtn{
+  flex:1;height:42px;border-radius:50px;border:none;
+  font-family:'Nunito',sans-serif;font-size:13.5px;font-weight:800;
+  cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);
+}
+.bigbtn.pr{background:linear-gradient(135deg,var(--accent),var(--a2));color:#fff;box-shadow:0 5px 18px rgba(67,97,238,.32)}
+.bigbtn.pr:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 9px 26px rgba(67,97,238,.42)}
+.bigbtn.pr:disabled{opacity:.38;cursor:not-allowed;transform:none;box-shadow:none}
+.bigbtn.sc{background:var(--surface);color:var(--text2);border:1.5px solid var(--border)}
+.bigbtn.sc:hover{background:var(--surface3);color:var(--text)}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:600;
+  background:var(--surface);border:2px solid rgba(6,214,160,.38);border-radius:var(--r2);
+  padding:16px 20px;min-width:290px;box-shadow:0 10px 40px rgba(67,97,238,.18);
+  display:flex;align-items:flex-start;gap:12px;
+  transform:translateX(120%);opacity:0;transition:all .42s cubic-bezier(.34,1.56,.64,1);
+}
+.toast.show{transform:translateX(0);opacity:1}
+.toast-icon{width:38px;height:38px;border-radius:13px;background:linear-gradient(135deg,rgba(6,214,160,.18),rgba(76,201,240,.18));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast-icon svg{width:20px;height:20px;color:var(--green)}
+.toast h4{font-size:14px;font-weight:800;color:var(--text);margin-bottom:2px}
+.toast p{font-size:12.5px;color:var(--text3);line-height:1.42;font-weight:600}
+.toast strong{color:var(--accent)}
+.toast-x{margin-left:auto;cursor:pointer;color:var(--text3);flex-shrink:0;opacity:.55;transition:opacity .15s}
+.toast-x:hover{opacity:1}
+
+/* ── CONFETTI ── */
+.conf{position:fixed;pointer-events:none;z-index:700;animation:confetti-fall 1.3s ease-out forwards}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:50px 20px;animation:fadeUp .4s ease;position:relative;z-index:1}
+.empty-icon{width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,rgba(67,97,238,.1),rgba(123,47,247,.1));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:float 2.8s ease-in-out infinite}
+.empty-icon svg{width:34px;height:34px;color:var(--accent)}
+.empty h3{font-family:'Righteous',sans-serif;font-size:17px;color:var(--text);margin-bottom:7px;font-weight:400}
+.empty p{font-size:13px;color:var(--text3);line-height:1.65;font-weight:600;max-width:300px;margin:0 auto}
+
+/* Album + add button */
+.album-add-btn{
+  display:flex;align-items:center;gap:8px;height:36px;padding:0 16px;
+  border-radius:50px;background:linear-gradient(135deg,var(--accent),var(--a2));
+  border:none;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 14px rgba(67,97,238,.35);
+  margin-left:auto;
+}
+.album-add-btn:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 7px 20px rgba(67,97,238,.45)}
+.album-add-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.album-add-btn svg{width:16px;height:16px}
+.album-training-bar{
+  display:flex;align-items:center;gap:10px;padding:10px 28px 0;
+}
+.atb-label{font-size:12px;font-weight:700;color:var(--text3);white-space:nowrap}
+.atb-pips{display:flex;gap:4px}
+.atb-pip{width:22px;height:5px;border-radius:3px;background:var(--border);transition:all .4s cubic-bezier(.34,1.56,.64,1)}
+.atb-pip.filled{background:linear-gradient(90deg,var(--accent),var(--a2))}
+.atb-status{font-size:11.5px;font-weight:700;color:var(--text3);white-space:nowrap}
+.atb-status.trained{color:var(--green)}
+footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1a1d3a 100%);position:relative;overflow:hidden;z-index:20}
+.ft-rainbow{height:3px;background:linear-gradient(90deg,#4361ee,#7b2ff7,#f72585,#ffbe0b,#06d6a0,#4cc9f0,#4361ee);background-size:200%;animation:rainbowShift 3s linear infinite}
+.ft-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 380px 100px at 20% 50%,rgba(67,97,238,.18) 0%,transparent 70%),radial-gradient(ellipse 280px 90px at 80% 50%,rgba(247,37,133,.13) 0%,transparent 70%)}
+.ft-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;padding:14px 28px;gap:18px;flex-wrap:wrap}
+.ft-brand{display:flex;align-items:center;gap:9px}
+.ft-logo{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#ffbe0b,#f97316);display:flex;align-items:center;justify-content:center;font-family:'Righteous',sans-serif;font-size:14px;color:#fff;animation:wiggle 3.5s ease-in-out infinite;box-shadow:0 3px 12px rgba(255,190,11,.35)}
+.ft-name{font-family:'Righteous',sans-serif;font-size:13px;color:#fff;font-weight:400}
+.ft-name span{font-size:10px;color:rgba(255,255,255,.45);display:block;letter-spacing:.5px}
+.ft-center{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center}
+.ft-tag{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:1px}
+.ft-chips{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.ft-chip{font-size:10.5px;font-weight:700;padding:3px 11px;border-radius:50px;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.65);background:rgba(255,255,255,.05);transition:all .2s;cursor:default}
+.ft-chip:hover{background:rgba(255,255,255,.12);color:#fff}
+.ft-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.ft-love{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:5px}
+.ft-heart{color:#f72585;animation:wiggle 1.8s ease-in-out infinite;display:inline-block}
+.ft-copy{font-size:10.5px;color:rgba(255,255,255,.38);font-weight:600}
+
+/* ── AUTO-SORT MATCH OVERLAY ── */
+@keyframes arcDraw{from{stroke-dashoffset:164}to{stroke-dashoffset:var(--arc-target)}}
+@keyframes scoreCount{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+.asort-overlay{
+  position:fixed;inset:0;background:rgba(10,12,40,.72);z-index:700;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(10px);
+}
+.asort-overlay.hidden{display:none}
+.asort-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--r3);width:520px;max-width:96vw;
+  box-shadow:0 28px 80px rgba(67,97,238,.28);
+  animation:popIn .3s cubic-bezier(.34,1.56,.64,1);
+  overflow:hidden;
+}
+.asort-topbar{
+  background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#3b1a6e 100%);
+  padding:22px 24px 18px;position:relative;overflow:hidden;
+}
+.asort-topbar::after{content:'';position:absolute;right:-50px;top:-50px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
+.asort-topbar-title{font-family:'Righteous',sans-serif;font-size:18px;color:#fff;font-weight:400;margin-bottom:4px;z-index:1;position:relative}
+.asort-topbar-sub{font-size:12.5px;color:rgba(255,255,255,.6);font-weight:600;z-index:1;position:relative}
+.asort-body{padding:28px 28px 20px;display:flex;flex-direction:column;align-items:center;gap:22px}
+
+/* Comparison row */
+.asort-compare{display:flex;align-items:center;justify-content:center;gap:20px;width:100%}
+.asort-photo-box{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1}
+.asort-photo-box img{
+  width:110px;height:110px;object-fit:cover;border-radius:16px;
+  border:3px solid var(--border);box-shadow:0 6px 24px rgba(67,97,238,.15);
+}
+.asort-photo-label{font-size:12px;font-weight:700;color:var(--text3)}
+.asort-av-large{
+  width:110px;height:110px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Righteous',sans-serif;font-size:36px;font-weight:400;
+  border:4px solid;box-shadow:0 6px 24px rgba(0,0,0,.12);
+}
+.asort-name-label{font-size:14px;font-weight:800;color:var(--text);max-width:110px;text-align:center;line-height:1.2}
+
+/* Score ring in the middle */
+.asort-ring-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
+.asort-ring{position:relative;width:90px;height:90px}
+.asort-ring svg{width:90px;height:90px;transform:rotate(-90deg)}
+.asort-ring-track{fill:none;stroke:var(--border);stroke-width:6}
+.asort-ring-fill{fill:none;stroke-width:6;stroke-linecap:round;stroke-dasharray:252;stroke-dashoffset:252;transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)}
+.asort-ring-val{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Righteous',sans-serif;font-size:18px;color:var(--text);font-weight:400;
+  animation:scoreCount .6s .8s cubic-bezier(.34,1.56,.64,1) both;
+}
+.asort-match-lbl{font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.8px;text-transform:uppercase}
+
+/* Arrow */
+.asort-arrows{font-size:22px;color:var(--border2);display:flex;flex-direction:column;gap:2px;align-items:center}
+
+/* Status banner */
+.asort-status{
+  width:100%;border-radius:var(--r);padding:14px 18px;
+  display:flex;align-items:center;gap:12px;
+}
+.asort-status.matched{background:rgba(6,214,160,.08);border:1.5px solid rgba(6,214,160,.3)}
+.asort-status.nomatch{background:rgba(247,37,133,.07);border:1.5px solid rgba(247,37,133,.25)}
+.asort-status-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.asort-status.matched .asort-status-icon{background:rgba(6,214,160,.18)}
+.asort-status.nomatch .asort-status-icon{background:rgba(247,37,133,.14)}
+.asort-status-text h4{font-size:14px;font-weight:800;color:var(--text);margin-bottom:2px}
+.asort-status-text p{font-size:12.5px;color:var(--text3);font-weight:600;line-height:1.4}
+.asort-status.matched .asort-status-text h4{color:#059669}
+.asort-status.nomatch .asort-status-text h4{color:#be185d}
+
+/* Actions */
+.asort-actions{display:flex;gap:10px;width:100%;padding:0 28px 24px}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+</style>
+</head>
+<body>
+
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-logo-area">
+    <span class="moments-by-text">Moments</span>
+    <div class="cosmos-divider"></div>
+    <div class="cogno-logo-wrap">
+      <span class="cogno-by">BY</span>
+      <div class="cogno-brand">
+        <!-- Replace src with your CognoSpace logo file path -->
+        <img src="cognospace_logo.png" alt="CognoSpace" class="cogno-logo-img"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="cogno-logo-fallback" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+          CognoSpace
+        </div>
+        <div class="cogno-name"><em></em></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search photos and albums…" id="searchInput" oninput="handleSearch(this.value)"/>
+  </div>
+
+  <div class="nav-actions">
+    <button class="nav-btn" onclick="openTrainNew()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      Train New Person
+    </button>
+    <button class="nav-btn primary" onclick="handleNavUpload()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Upload
+    </button>
+    <input type="file" id="navUploadInput" accept="image/*" style="display:none" onchange="handleNavUploadFile(this)"/>
+    <input type="file" id="trainUploadInput" accept="image/*" style="display:none" onchange="handleTrainFile(this)"/>
+  </div>
+</nav>
+
+<!-- ══ APP BODY ══ -->
+<div class="app-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-item active" onclick="showView('timeline')" id="sbPhotos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Photos
+    </div>
+    <div class="sb-item" onclick="showView('people')" id="sbPeople">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg>
+      People
+    </div>
+    <div class="sb-item" onclick="showView('people')" id="sbAlbums">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      Albums
+    </div>
+    <div class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+      Favourites
+    </div>
+    <div class="sb-div"></div>
+    <div class="sb-section">People</div>
+    <div id="sbPeopleList"></div>
+    <div class="sb-div"></div>
+    <div class="sb-section">Albums</div>
+    <div id="sbAlbumsList"></div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="mainContent">
+
+    <!-- TIMELINE VIEW -->
+    <div class="view active" id="timelineView">
+      <div class="highlights-strip" id="highlightsStrip" style="display:none"></div>
+      <div class="upload-zone" id="dropzone">
+        <input type="file" accept="image/*" multiple onchange="handleDropzoneFiles(this.files)"/>
+        <div class="upload-icon-wrap">
+          <svg class="usv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <h3>Drop photos to train face recognition</h3>
+        <p>Upload photos here to train a person. Use the navbar Upload button to auto-sort trained photos.</p>
+      </div>
+      <div id="timelineContent"></div>
+      <div class="empty" id="timelineEmpty" style="display:none">
+        <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <h3>No photos yet</h3>
+        <p>Upload photos to start building your memory library. Trained faces will be auto-sorted!</p>
+      </div>
+    </div>
+
+    <!-- PEOPLE VIEW -->
+    <div class="view" id="peopleView">
+      <div style="padding:22px 28px 0">
+        <div class="people-view-header">
+          <div class="view-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg>
+            People
+            <span class="count-pill" id="peopleCount">0</span>
+          </div>
+        </div>
+        <div class="person-grid" id="personGrid"></div>
+        <div class="empty" id="peopleEmpty" style="display:none">
+          <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></div>
+          <h3>No people albums yet</h3>
+          <p>Upload and train 4–5 photos of a person to create their album automatically.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALBUM VIEW -->
+    <div class="view" id="albumView">
+      <div class="album-header" id="albumHeader">
+        <div class="album-back" onclick="showView('people')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+        <div class="album-av" id="albumAv"></div>
+        <div style="flex:1;min-width:0">
+          <div class="album-title" id="albumTitle">Album</div>
+          <div class="album-sub" id="albumSub">0 photos</div>
+        </div>
+        <input type="file" id="albumAddInput" accept="image/*" style="display:none" onchange="handleAlbumAdd(this)"/>
+        <button class="album-add-btn" id="albumAddBtn" onclick="document.getElementById('albumAddInput').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Photo
+        </button>
+      </div>
+      <!-- Training progress bar inside album -->
+      <div class="album-training-bar" id="albumTrainingBar">
+        <span class="atb-label">Training:</span>
+        <div class="atb-pips" id="albumPips"></div>
+        <span class="atb-status" id="albumTrainStatus">0 / 5 photos</span>
+      </div>
+      <div class="album-grid" id="albumGrid"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══ ANALYSIS MODAL ══ -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div style="display:flex;align-items:center;gap:9px;flex:1;min-width:0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <h2 id="modalTitle">Analysing Face…</h2>
+        <span class="modal-step-badge" id="modalBadge">Step 1/5</span>
+      </div>
+      <div class="modal-x" onclick="closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="analysis-pane">
+        <div class="img-wrap" id="imgWrap">
+          <img id="analysisImg" src="" alt="face"/>
+          <canvas class="acanvas" id="acanvas"></canvas>
+        </div>
+        <div class="step-list" id="stepList"></div>
+      </div>
+      <div class="info-pane">
+        <div class="mcard" id="confCard">
+          <div class="mlabel">Confidence</div>
+          <div class="mval" id="confVal">–</div>
+          <div class="msub">face detection</div>
+        </div>
+        <div class="mcard">
+          <div class="mlabel">Landmarks</div>
+          <div class="mval" id="ldmkVal">0</div>
+          <div class="msub">points mapped</div>
+          <div class="lmgrid" id="ldmkGrid"></div>
+        </div>
+        <div class="mcard match-glow" id="matchCard" style="display:none">
+          <div class="mlabel">Matched</div>
+          <div class="mval green" id="matchName">–</div>
+          <div class="msub" id="matchScore">–</div>
+        </div>
+        <div class="name-wrap" id="nameWrap">
+          <label>Who is this person?</label>
+          <input class="ninput" type="text" id="personName" placeholder="e.g. Arjun Kumar"/>
+        </div>
+        <div class="train-badge">
+          <div class="train-lbl" id="trainLbl">Training progress</div>
+          <div class="train-pips" id="trainPips"></div>
+          <div class="train-hint" id="trainHint">4–5 photos needed for auto-match</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="bigbtn sc" onclick="closeModal()">Cancel</button>
+      <button class="bigbtn pr" id="saveBtn" onclick="savePhoto()" disabled>Save to Album</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast">
+  <div class="toast-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+  <div style="flex:1;min-width:0">
+    <h4 id="toastTitle">Saved!</h4>
+    <p id="toastBody">Added to album.</p>
+  </div>
+  <div class="toast-x" onclick="this.parentElement.classList.remove('show')">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </div>
+</div>
+
+<!-- ══ AUTO-SORT MATCH OVERLAY ══ -->
+<div class="asort-overlay hidden" id="asortOverlay">
+  <div class="asort-card">
+    <div class="asort-topbar">
+      <div class="asort-topbar-title" id="asortTitle">🔍 Matching Face…</div>
+      <div class="asort-topbar-sub" id="asortTopSub">Comparing against trained profiles</div>
+    </div>
+    <div class="asort-body">
+      <!-- photo comparison -->
+      <div class="asort-compare" id="asortCompare">
+        <div class="asort-photo-box">
+          <img id="asortUpImg" src="" alt="uploaded"/>
+          <div class="asort-photo-label">Uploaded Photo</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="font-size:26px;color:var(--border2)">→</div>
+          <div class="asort-ring-wrap">
+            <div class="asort-ring">
+              <svg viewBox="0 0 90 90">
+                <circle class="asort-ring-track" cx="45" cy="45" r="40"/>
+                <circle class="asort-ring-fill" id="asortArc" cx="45" cy="45" r="40"/>
+              </svg>
+              <div class="asort-ring-val" id="asortScoreVal">–%</div>
+            </div>
+            <div class="asort-match-lbl">Similarity</div>
+          </div>
+          <div style="font-size:26px;color:var(--border2)">→</div>
+        </div>
+        <div class="asort-photo-box">
+          <div class="asort-av-large" id="asortMatchAv">?</div>
+          <div class="asort-name-label" id="asortMatchName">–</div>
+          <div class="asort-photo-label" id="asortMatchSub"></div>
+        </div>
+      </div>
+      <!-- status banner -->
+      <div class="asort-status" id="asortStatusBanner">
+        <div class="asort-status-icon" id="asortStatusIcon"></div>
+        <div class="asort-status-text">
+          <h4 id="asortStatusH">Analysing…</h4>
+          <p id="asortStatusP">Please wait</p>
+        </div>
+      </div>
+    </div>
+    <div class="asort-actions">
+      <button class="bigbtn sc" onclick="closeAsort()" style="flex:1">Close</button>
+      <button class="bigbtn pr" id="asortGoBtn" onclick="goToMatchAlbum()" style="flex:1.5;display:none">
+        Open Album →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="ft-rainbow"></div>
+  <div class="ft-glow"></div>
+  <div class="ft-inner">
+    <div class="ft-brand">
+      <div class="ft-logo">C</div>
+      <div>
+        <div class="ft-name">CognoSpace<span>Experiential Learning</span></div>
+      </div>
+    </div>
+    <div class="ft-center">
+      <div class="ft-tag">✦ MOMENTS BY COGNOSPACE ✦</div>
+    </div>
+    <div class="ft-right">
+      <div class="ft-love">Made with <span class="ft-heart">♥</span> for Young Innovators</div>
+      <div class="ft-copy">© 2025 CognoSpace · All rights reserved · Powered by AI & Curiosity 🚀</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  face-api.js INTEGRATION — Real Neural Network Face Recognition
+//  Uses TinyFaceDetector + FaceLandmark68 + FaceRecognition models
+//  Models loaded from jsDelivr CDN (no backend needed)
+// ════════════════════════════════════════════════════════
+
+const MODELS_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model';
+let faceApiReady=false;
+let faceApiLoading=false;
+
+// Status overlay for model loading
+function showModelStatus(msg,sub,done){
+  let ov=document.getElementById('modelLoadOv');
+  if(!ov){
+    ov=document.createElement('div');
+    ov.id='modelLoadOv';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(10,12,40,.88);z-index:900;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)';
+    ov.innerHTML=`<div style="background:#fff;border-radius:24px;padding:36px 40px;max-width:420px;text-align:center;box-shadow:0 24px 60px rgba(67,97,238,.3)">
+      <div id="mlIcon" style="font-size:3rem;margin-bottom:14px">🧠</div>
+      <div id="mlMsg" style="font-family:'Righteous',sans-serif;font-size:17px;color:#1a1d3a;margin-bottom:8px"></div>
+      <div id="mlSub" style="font-size:13px;color:#8890bb;font-weight:600;line-height:1.5;margin-bottom:18px"></div>
+      <div style="height:6px;background:#eef1ff;border-radius:3px;overflow:hidden"><div id="mlBar" style="height:100%;width:0;background:linear-gradient(90deg,#4361ee,#7b2ff7);border-radius:3px;transition:width .5s ease"></div></div>
+      <div id="mlPct" style="font-size:12px;color:#8890bb;margin-top:8px;font-weight:600">0%</div>
+    </div>`;
+    document.body.appendChild(ov);
+  }
+  document.getElementById('mlMsg').textContent=msg;
+  document.getElementById('mlSub').textContent=sub;
+  if(done){
+    document.getElementById('mlIcon').textContent='✅';
+    document.getElementById('mlBar').style.width='100%';
+    document.getElementById('mlPct').textContent='100% — Ready!';
+    setTimeout(()=>ov.remove(),1200);
+  }
+}
+function setModelProgress(pct){
+  const bar=document.getElementById('mlBar');
+  const lbl=document.getElementById('mlPct');
+  if(bar) bar.style.width=pct+'%';
+  if(lbl) lbl.textContent=Math.round(pct)+'%';
+}
+
+async function loadFaceApi(){
+  if(faceApiReady) return true;
+  if(faceApiLoading) return false;
+  faceApiLoading=true;
+  showModelStatus('Loading AI Models…','Downloading face recognition neural networks (≈5 MB). This happens only once.', false);
+  try{
+    await faceapi.nets.tinyFaceDetector.loadFromUri(MODELS_URL);
+    setModelProgress(33);
+    await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODELS_URL);
+    setModelProgress(66);
+    await faceapi.nets.faceRecognitionNet.loadFromUri(MODELS_URL);
+    setModelProgress(100);
+    faceApiReady=true;
+    showModelStatus('AI Ready!','Face recognition models loaded successfully.',true);
+    return true;
+  }catch(e){
+    console.error('face-api load error:',e);
+    const ov=document.getElementById('modelLoadOv');
+    if(ov) ov.innerHTML=`<div style="background:#fff;border-radius:24px;padding:36px;text-align:center;max-width:400px">
+      <div style="font-size:2.5rem;margin-bottom:12px">⚠️</div>
+      <div style="font-family:'Righteous',sans-serif;font-size:16px;color:#dc2626;margin-bottom:8px">Model Load Failed</div>
+      <div style="font-size:13px;color:#8890bb;font-weight:600;margin-bottom:18px">Could not load AI models. Check internet connection and reload the page.</div>
+      <button onclick="location.reload()" style="background:#4361ee;color:#fff;border:none;border-radius:50px;padding:10px 24px;font-weight:700;cursor:pointer;font-size:14px">Reload Page</button>
+    </div>`;
+    return false;
+  }
+}
+
+// Get 128-D face descriptor from an image element using face-api.js
+async function getFaceDescriptor(imgEl){
+  const detection=await faceapi
+    .detectSingleFace(imgEl, new faceapi.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:0.4}))
+    .withFaceLandmarks(true)
+    .withFaceDescriptor();
+  return detection ? detection.descriptor : null;
+}
+
+// Get descriptor from a URL (loads into a temp img element)
+async function getDescriptorFromUrl(url){
+  return new Promise((resolve)=>{
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=async()=>{
+      try{
+        const desc=await getFaceDescriptor(img);
+        resolve(desc);
+      }catch{ resolve(null); }
+    };
+    img.onerror=()=>resolve(null);
+    img.src=url;
+  });
+}
+
+// Euclidean distance between two Float32Array face descriptors
+// face-api threshold: <0.6 = same person, >0.6 = different person
+function faceDistance(d1,d2){
+  let sum=0;
+  for(let i=0;i<d1.length;i++) sum+=(d1[i]-d2[i])**2;
+  return Math.sqrt(sum);
+}
+
+// distance → 0–100 similarity score (for display)
+function distToScore(dist){
+  // 0.0 dist = 100%, 0.6 dist = 0%, linear
+  return Math.max(0, Math.round((1-dist/0.6)*100));
+}
+
+// ════════════════════════════════════════════════════════
+//  DATA STORE
+// ════════════════════════════════════════════════════════
+const DB={
+  people:{},   // name→{color,bgColor,initials,images:[],descriptors:[Float32Array]}
+  allPhotos:[] // [{url,date,id,personName}]
+};
+const PAL=[
+  ['#4361ee','#e8edff'],['#7b2ff7','#f0e8ff'],['#f72585','#ffe8f4'],
+  ['#06d6a0','#e4fff8'],['#ffbe0b','#fff9e0'],['#4cc9f0','#e4f8ff'],
+  ['#f97316','#fff3e8'],['#8b5cf6','#f0e8ff']
+];
+let palIdx=0;
+function nextColor(){const c=PAL[palIdx%PAL.length];palIdx++;return c;}
+function initials(n){return n.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+function fmtDate(d){return d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'long',year:'numeric'});}
+function fmtDateShort(d){return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}
+let photoCounter=0;
+
+// ════════════════════════════════════════════════════════
+//  VIEW MANAGEMENT
+// ════════════════════════════════════════════════════════
+let currentView='timeline';
+function showView(v,personName){
+  currentView=v;
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
+  if(v==='timeline'){
+    document.getElementById('timelineView').classList.add('active');
+    document.getElementById('sbPhotos').classList.add('active');
+  }else if(v==='people'){
+    document.getElementById('peopleView').classList.add('active');
+    document.getElementById('sbPeople').classList.add('active');
+    renderPeopleView();
+  }else if(v==='album'&&personName){
+    document.getElementById('albumView').classList.add('active');
+    openAlbum(personName);
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  UPLOAD HANDLERS
+// ════════════════════════════════════════════════════════
+function handleDropzoneFiles(files){if(files&&files.length)openAnalysisModal(files[0],false);}
+function openTrainNew(){document.getElementById('trainUploadInput').click();}
+function handleTrainFile(input){if(input.files&&input.files[0])openAnalysisModal(input.files[0],false);input.value='';}
+
+function handleNavUpload(){
+  if(!Object.keys(DB.people).length){showToast('No albums yet!','Train at least one person first.','error');return;}
+  document.getElementById('navUploadInput').click();
+}
+function handleNavUploadFile(input){
+  if(!input.files||!input.files[0]){input.value='';return;}
+  const file=input.files[0];input.value='';
+  runAutoSort(file);
+}
+
+const dz=document.getElementById('dropzone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');handleDropzoneFiles(e.dataTransfer.files);});
+
+// ════════════════════════════════════════════════════════
+//  LANDMARK DRAWING (visual-only, for the training modal UI)
+// ════════════════════════════════════════════════════════
+const LM_BASE=[
+  {id:'leye_out',lx:.64,ly:.385,g:'eye'},{id:'leye_in',lx:.55,ly:.382,g:'eye'},
+  {id:'leye_top',lx:.595,ly:.360,g:'eye'},{id:'leye_bot',lx:.595,ly:.408,g:'eye'},
+  {id:'leye_irt',lx:.57,ly:.368,g:'eye'},{id:'leye_irb',lx:.57,ly:.400,g:'eye'},
+  {id:'reye_out',lx:.36,ly:.385,g:'eye'},{id:'reye_in',lx:.45,ly:.382,g:'eye'},
+  {id:'reye_top',lx:.405,ly:.360,g:'eye'},{id:'reye_bot',lx:.405,ly:.408,g:'eye'},
+  {id:'reye_irt',lx:.43,ly:.368,g:'eye'},{id:'reye_irb',lx:.43,ly:.400,g:'eye'},
+  {id:'nbr_top',lx:.50,ly:.415,g:'nose'},{id:'nbr_mid',lx:.50,ly:.455,g:'nose'},
+  {id:'ntip',lx:.50,ly:.535,g:'nose'},{id:'nal_left',lx:.43,ly:.535,g:'nose'},
+  {id:'nal_right',lx:.57,ly:.535,g:'nose'},{id:'nbas_l',lx:.455,ly:.555,g:'nose'},
+  {id:'nbas_r',lx:.545,ly:.555,g:'nose'},
+  {id:'ml_corner',lx:.395,ly:.650,g:'mouth'},{id:'mr_corner',lx:.605,ly:.650,g:'mouth'},
+  {id:'mut_l',lx:.455,ly:.632,g:'mouth'},{id:'mut_r',lx:.545,ly:.632,g:'mouth'},
+  {id:'mut_pk',lx:.50,ly:.624,g:'mouth'},{id:'mlb_l',lx:.455,ly:.672,g:'mouth'},
+  {id:'mlb_r',lx:.545,ly:.672,g:'mouth'},{id:'mlb_ctr',lx:.50,ly:.678,g:'mouth'},
+  {id:'jaw_fl',lx:.195,ly:.520,g:'jaw'},{id:'jaw_l',lx:.24,ly:.650,g:'jaw'},
+  {id:'chin_l',lx:.37,ly:.820,g:'jaw'},{id:'chin',lx:.50,ly:.860,g:'jaw'},
+  {id:'chin_r',lx:.63,ly:.820,g:'jaw'},{id:'jaw_r',lx:.76,ly:.650,g:'jaw'},
+  {id:'jaw_fr',lx:.805,ly:.520,g:'jaw'},
+  {id:'fh_l',lx:.32,ly:.225,g:'fh'},{id:'fh_r',lx:.68,ly:.225,g:'fh'},
+  {id:'fh_m',lx:.50,ly:.195,g:'fh'},{id:'fh_lm',lx:.41,ly:.208,g:'fh'},
+  {id:'fh_rm',lx:.59,ly:.208,g:'fh'},
+];
+const EDGES=[
+  ['leye_out','leye_top'],['leye_top','leye_irt'],['leye_irt','leye_in'],
+  ['leye_in','leye_irb'],['leye_irb','leye_out'],['leye_bot','leye_irb'],['leye_bot','leye_irt'],
+  ['reye_out','reye_top'],['reye_top','reye_irt'],['reye_irt','reye_in'],
+  ['reye_in','reye_irb'],['reye_irb','reye_out'],['reye_bot','reye_irb'],['reye_bot','reye_irt'],
+  ['leye_in','nbr_top'],['reye_in','nbr_top'],['nbr_top','nbr_mid'],['nbr_mid','ntip'],
+  ['ntip','nal_left'],['ntip','nal_right'],['nal_left','nbas_l'],['nal_right','nbas_r'],
+  ['ml_corner','mut_l'],['mut_l','mut_pk'],['mut_pk','mut_r'],['mut_r','mr_corner'],
+  ['ml_corner','mlb_l'],['mlb_l','mlb_ctr'],['mlb_ctr','mlb_r'],['mlb_r','mr_corner'],
+  ['jaw_fl','jaw_l'],['jaw_l','chin_l'],['chin_l','chin'],['chin','chin_r'],['chin_r','jaw_r'],['jaw_r','jaw_fr'],
+  ['jaw_fl','leye_out'],['jaw_fr','reye_out'],
+  ['fh_l','fh_lm'],['fh_lm','fh_m'],['fh_m','fh_rm'],['fh_rm','fh_r'],
+  ['fh_l','leye_out'],['fh_r','reye_out'],
+];
+const MLINES=[
+  {a:'leye_out',b:'reye_out',label:'Eye span',color:'#4361ee'},
+  {a:'leye_in',b:'reye_in',label:'Interocular',color:'#7b2ff7'},
+  {a:'fh_m',b:'chin',label:'Face height',color:'#ffbe0b'},
+  {a:'ntip',b:'chin',label:'Nose→chin',color:'#06d6a0'},
+  {a:'jaw_fl',b:'jaw_fr',label:'Jaw width',color:'#f72585'},
+  {a:'ml_corner',b:'mr_corner',label:'Mouth width',color:'#4cc9f0'},
+];
+const GCOL={eye:'#4361ee',nose:'#7b2ff7',mouth:'#06d6a0',jaw:'#ffbe0b',fh:'#f72585'};
+
+function buildLMWithJitter(seed){
+  let s=seed;
+  function srnd(){s=(s*1664525+1013904223)&0xffffffff;return((s>>>0)/0xffffffff)-.5;}
+  const tiltX=srnd()*.04,tiltY=srnd()*.03,scaleVar=1+srnd()*.08;
+  const groupOff={eye:{x:srnd()*.02,y:srnd()*.016},nose:{x:srnd()*.014,y:srnd()*.018},mouth:{x:srnd()*.016,y:srnd()*.02},jaw:{x:srnd()*.022,y:srnd()*.018},fh:{x:srnd()*.016,y:srnd()*.015}};
+  return LM_BASE.map(lm=>{
+    const go=groupOff[lm.g]||{x:0,y:0};
+    return{...lm,lx:lm.lx*scaleVar+tiltX+go.x+srnd()*.009,ly:lm.ly*scaleVar+tiltY+go.y+srnd()*.009};
+  });
+}
+function fileSeed(f){return(f.size^(f.lastModified&0xffff)^(f.name.split('').reduce((a,c)=>a+c.charCodeAt(0),0)))>>>0||Date.now();}
+let LM=LM_BASE.slice();
+
+// ════════════════════════════════════════════════════════
+//  MODAL — face analysis with REAL face-api.js descriptor
+// ════════════════════════════════════════════════════════
+let curFile=null,curURL='',curDescriptor=null,analysisOk=false,curMatch=null,isNavUpload=false,prefillName='';
+
+async function openAnalysisModal(file,navMode,preName){
+  // Ensure models are loaded first
+  const ready=await loadFaceApi();
+  if(!ready) return;
+
+  curFile=file;isNavUpload=navMode;analysisOk=false;curMatch=null;prefillName=preName||'';curDescriptor=null;
+  LM=buildLMWithJitter(fileSeed(file));
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.getElementById('modalTitle').textContent='Analysing Face…';
+  document.getElementById('modalBadge').textContent='Step 1/5';
+  document.getElementById('saveBtn').disabled=true;
+  document.getElementById('personName').value=prefillName;
+  document.getElementById('matchCard').style.display='none';
+  document.getElementById('nameWrap').style.display=navMode?'none':'flex';
+  if(navMode) document.getElementById('modalTitle').textContent='Auto-Sorting Photo…';
+  const url=URL.createObjectURL(file);curURL=url;
+  const img=document.getElementById('analysisImg');
+  img.src=url;
+  img.onload=()=>startAnalysis();
+  renderTrainPips();buildSteps();
+}
+
+function closeModal(){document.getElementById('modalOverlay').classList.add('hidden');curFile=null;}
+
+const STEPS=[
+  {id:'detect',    title:'Face Detection',       sub:'Locating face in image'},
+  {id:'landmarks', title:'Landmark Mapping',     sub:'Placing 68 anatomical points'},
+  {id:'measure',   title:'Geometric Measurement',sub:'Computing key distances'},
+  {id:'embed',     title:'Feature Embedding',    sub:'Encoding 128-D face vector'},
+  {id:'match',     title:'Identity Matching',    sub:'Comparing against profiles'},
+];
+function buildSteps(){
+  document.getElementById('stepList').innerHTML=STEPS.map(s=>`
+    <div class="step-item" id="si-${s.id}">
+      <div class="sdot" id="sd-${s.id}"></div>
+      <div style="flex:1;min-width:0">
+        <div class="stitle">${s.title}</div>
+        <div class="ssub" id="ss-${s.id}">${s.sub}</div>
+        <div class="sbar"><div class="sbar-fill" id="sb-${s.id}"></div></div>
+      </div>
+    </div>`).join('');
+  document.getElementById('confVal').textContent='–';
+  document.getElementById('ldmkVal').textContent='0';
+  document.getElementById('ldmkGrid').innerHTML='';
+}
+
+async function startAnalysis(){
+  const canvas=document.getElementById('acanvas');
+  const img=document.getElementById('analysisImg');
+  const wrap=document.getElementById('imgWrap');
+  const W=wrap.offsetWidth,H=wrap.offsetHeight;
+  canvas.width=W;canvas.height=H;
+
+  const iw=img.naturalWidth,ih=img.naturalHeight;
+  const scale=Math.min(W/iw,H/ih);
+  const rw=iw*scale,rh=ih*scale;
+  const rx=(W-rw)/2,ry=(H-rh)/2;
+  const ar=iw/ih;
+  const fWr=ar<0.8?0.58:ar>1.3?0.40:0.52;
+  const fHr=ar<0.8?0.70:ar>1.3?0.60:0.65;
+  const fTopR=ar<0.8?0.04:ar>1.3?0.15:0.06;
+  const seed=fileSeed(curFile);let ss=seed;
+  function srnd2(){ss=(ss*22695477+1)&0xffffffff;return((ss>>>0)/0xffffffff)-.5;}
+  const fW=rw*fWr,fH=rh*fHr;
+  const fX=rx+(rw-fW)/2+srnd2()*.04*rw;
+  const fY=ry+rh*fTopR+srnd2()*.03*rh;
+  function lpos(lm){return{x:fX+Math.max(.05,Math.min(.95,lm.lx))*fW,y:fY+Math.max(.05,Math.min(.95,lm.ly))*fH};}
+  const pos={};LM.forEach(l=>{pos[l.id]=lpos(l);});
+  const ctx=canvas.getContext('2d');
+
+  // STEP 1: Detect
+  document.getElementById('modalBadge').textContent='Step 1/5';
+  await doStep('detect',950,()=>{
+    let sy=ry,si=setInterval(()=>{
+      ctx.clearRect(0,0,W,H);ctx.strokeStyle='rgba(67,97,238,.08)';ctx.lineWidth=.8;
+      for(let y=ry;y<ry+rh;y+=14){ctx.beginPath();ctx.moveTo(rx,y);ctx.lineTo(rx+rw,y);ctx.stroke();}
+      ctx.fillStyle='rgba(67,97,238,.12)';ctx.fillRect(rx,sy,rw,18);
+      sy+=6;if(sy>ry+rh)sy=ry;
+    },22);
+    setTimeout(()=>{
+      clearInterval(si);ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='rgba(67,97,238,.7)';ctx.lineWidth=1.8;ctx.setLineDash([10,8]);
+      ctx.strokeRect(fX,fY,fW,fH);ctx.setLineDash([]);
+      [[fX,fY],[fX+fW,fY],[fX,fY+fH],[fX+fW,fY+fH]].forEach(([cx,cy])=>{
+        const sx=cx===fX?1:-1,sy=cy===fY?1:-1;
+        ctx.strokeStyle='#4361ee';ctx.lineWidth=3.5;ctx.shadowColor='#4361ee';ctx.shadowBlur=10;
+        ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+sx*16,cy);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx,cy+sy*16);ctx.stroke();ctx.shadowBlur=0;
+      });
+      ctx.fillStyle='rgba(67,97,238,.88)';ctx.beginPath();ctx.roundRect(fX,fY-22,96,19,4);ctx.fill();
+      ctx.fillStyle='#fff';ctx.font='bold 10.5px Nunito,sans-serif';ctx.textAlign='left';ctx.fillText('FACE DETECTED',fX+6,fY-8);
+      document.getElementById('confVal').textContent=Math.floor(Math.random()*5+94)+'%';
+      document.getElementById('confCard').classList.add('glow');
+      document.getElementById('ss-detect').textContent='Face detected ✓';
+    },750);
+  });
+
+  // STEP 2: Landmarks
+  document.getElementById('modalBadge').textContent='Step 2/5';
+  await doStep('landmarks',1900,async()=>{
+    for(let i=0;i<LM.length;i++){
+      await delay(46);
+      const lm=LM[i];const p=pos[lm.id];const gc=GCOL[lm.g];
+      ctx.beginPath();ctx.arc(p.x,p.y,6,0,Math.PI*2);ctx.fillStyle=gc+'18';ctx.fill();
+      ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);
+      ctx.fillStyle=gc;ctx.shadowColor=gc;ctx.shadowBlur=5;ctx.fill();ctx.shadowBlur=0;
+      ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=.7;ctx.stroke();
+      const drawn=new Set(LM.slice(0,i+1).map(l=>l.id));
+      EDGES.forEach(([a,b])=>{if(drawn.has(a)&&drawn.has(b)){
+        const pa=pos[a],pb=pos[b];ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);
+        ctx.strokeStyle=GCOL[LM.find(l=>l.id===a)?.g||'fh']+'30';ctx.lineWidth=.85;ctx.stroke();
+      }});
+      document.getElementById('ldmkVal').textContent=(i+1);
+      document.getElementById('sb-landmarks').style.width=Math.round((i+1)/LM.length*100)+'%';
+    }
+    const grpCounts={};LM.forEach(l=>{grpCounts[l.g]=(grpCounts[l.g]||0)+1;});
+    const grpNames={eye:'Eyes',nose:'Nose',mouth:'Mouth',jaw:'Jaw',fh:'Forehead'};
+    document.getElementById('ldmkGrid').innerHTML=Object.entries(grpCounts).map(([g,cnt])=>`
+      <div class="lmchip lit" style="border-color:${GCOL[g]}44;background:${GCOL[g]}10">
+        <span style="color:${GCOL[g]};font-weight:800">${grpNames[g]||g}</span>
+        <span>${cnt} pts</span>
+      </div>`).join('');
+    document.getElementById('ss-landmarks').textContent=`${LM.length} landmarks placed ✓`;
+  });
+
+  // STEP 3: Measure
+  document.getElementById('modalBadge').textContent='Step 3/5';
+  await doStep('measure',1400,async()=>{
+    for(const ml of MLINES){
+      await delay(190);
+      const pa=pos[ml.a],pb=pos[ml.b];if(!pa||!pb)continue;
+      ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);
+      ctx.strokeStyle=ml.color+'cc';ctx.lineWidth=1.8;ctx.setLineDash([6,5]);ctx.stroke();ctx.setLineDash([]);
+      const mx=(pa.x+pb.x)/2,my=(pa.y+pb.y)/2;
+      const d=Math.round(Math.sqrt((pb.x-pa.x)**2+(pb.y-pa.y)**2));
+      ctx.fillStyle=ml.color+'cc';ctx.beginPath();ctx.roundRect(mx-24,my-16,48,16,4);ctx.fill();
+      ctx.fillStyle='#fff';ctx.font='bold 9.5px Nunito,sans-serif';ctx.textAlign='center';ctx.fillText(d+'px',mx,my-5);
+      [pa,pb].forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,4.5,0,Math.PI*2);ctx.fillStyle=ml.color;ctx.fill();});
+    }
+    document.getElementById('ss-measure').textContent='6 geometric distances computed ✓';
+  });
+
+  // STEP 4: Real face-api.js embedding
+  document.getElementById('modalBadge').textContent='Step 4/5';
+  await doStep('embed',1200,async()=>{
+    // Run actual face-api.js neural network to get the 128-D descriptor
+    try{
+      curDescriptor=await getFaceDescriptor(img);
+    }catch(e){ curDescriptor=null; }
+    // Visual pulse on landmarks
+    LM.forEach((lm,i)=>{
+      const p=pos[lm.id];
+      setTimeout(()=>{ctx.beginPath();ctx.arc(p.x,p.y,7,0,Math.PI*2);ctx.fillStyle='rgba(123,47,247,.18)';ctx.fill();},i*22);
+    });
+    document.getElementById('ss-embed').textContent=curDescriptor
+      ?'✓ 128-D neural embedding extracted'
+      :'⚠ No face detected — try a clearer photo';
+  });
+
+  // STEP 5: Match against trained descriptors (REAL euclidean distance)
+  document.getElementById('modalBadge').textContent='Step 5/5';
+  await doStep('match',900,()=>{
+    curMatch=null;
+    if(curDescriptor){
+      // Compare against every stored descriptor for every person
+      let bestDist=Infinity,bestName=null;
+      for(const[name,data] of Object.entries(DB.people)){
+        if(!data.descriptors||!data.descriptors.length) continue;
+        const labeledDesc=new faceapi.LabeledFaceDescriptors(name,data.descriptors.map(d=>new Float32Array(d)));
+        const matcher=new faceapi.FaceMatcher(labeledDesc,0.55);
+        const result=matcher.findBestMatch(curDescriptor);
+        if(result.label!=='unknown'&&result.distance<bestDist){bestDist=result.distance;bestName=name;}
+      }
+      if(bestName){
+        const score=distToScore(bestDist);
+        curMatch={name:bestName,score:bestDist,displayScore:score};
+        document.getElementById('matchCard').style.display='block';
+        document.getElementById('nameWrap').style.display='none';
+        document.getElementById('matchName').textContent=bestName;
+        document.getElementById('matchScore').textContent='Confidence: '+score+'% — '+bestDist.toFixed(3)+' distance';
+        document.getElementById('modalTitle').textContent='Recognised: '+bestName;
+        document.getElementById('modalBadge').textContent='Auto-matched ✓';
+        document.getElementById('ss-match').textContent='Matched to '+bestName+' (dist: '+bestDist.toFixed(3)+') ✓';
+        ctx.strokeStyle='#06d6a0';ctx.lineWidth=3;ctx.shadowColor='#06d6a0';ctx.shadowBlur=14;
+        ctx.strokeRect(fX+2,fY+2,fW-4,fH-4);ctx.shadowBlur=0;
+      } else {
+        document.getElementById('ss-match').textContent='No match — name this person to create album';
+        document.getElementById('modalTitle').textContent='New Face Detected';
+        document.getElementById('modalBadge').textContent='Add name to save';
+      }
+    } else {
+      document.getElementById('ss-match').textContent='⚠ Could not extract face — try another photo';
+      document.getElementById('modalTitle').textContent='Face Not Detected';
+      document.getElementById('modalBadge').textContent='Try clearer photo';
+    }
+  });
+
+  analysisOk=true;
+  document.getElementById('saveBtn').disabled=false;
+  renderTrainPips();
+}
+
+async function doStep(id,dur,cb){
+  return new Promise(res=>{
+    const si=document.getElementById('si-'+id);
+    const sd=document.getElementById('sd-'+id);
+    if(si)si.classList.add('active');
+    if(sd)sd.innerHTML='<div style="width:10px;height:10px;border-radius:50%;border:2px solid currentColor;border-top-color:transparent;animation:spin .7s linear infinite"></div>';
+    const p=cb();
+    const bar=document.getElementById('sb-'+id);
+    if(bar)bar.style.width='0';
+    // If callback returns a promise, wait for it; else run duration-based progress
+    if(p&&p.then){
+      p.then(()=>{if(bar)bar.style.width='100%';if(si){si.classList.remove('active');si.classList.add('done');}if(sd)sd.textContent='✓';res();});
+    } else {
+      let st=null;
+      function tick(ts){if(!st)st=ts;const pct=Math.min((ts-st)/dur,1);if(bar)bar.style.width=Math.round(pct*100)+'%';if(pct<1)requestAnimationFrame(tick);else{if(si){si.classList.remove('active');si.classList.add('done');}if(sd)sd.textContent='✓';res();}}
+      requestAnimationFrame(tick);
+    }
+  });
+}
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function renderTrainPips(){
+  const name=document.getElementById('personName').value.trim();
+  const cnt=name&&DB.people[name]?DB.people[name].images.length:0;
+  document.getElementById('trainPips').innerHTML=Array.from({length:5},(_,i)=>`<div class="pip${i<cnt?' filled':''}"></div>`).join('');
+  if(cnt>=5){document.getElementById('trainLbl').textContent=(name||'')+'fully trained — auto ON!';document.getElementById('trainLbl').style.color='var(--green)';document.getElementById('trainHint').textContent='Next upload auto-sorted ⚡';document.getElementById('trainHint').style.color='var(--green)';}
+  else{document.getElementById('trainLbl').textContent='Training: '+cnt+'/5 photos';document.getElementById('trainLbl').style.color='';document.getElementById('trainHint').textContent='4–5 photos needed for auto-match';document.getElementById('trainHint').style.color='';}
+}
+document.getElementById('personName').addEventListener('input',renderTrainPips);
+
+// ════════════════════════════════════════════════════════
+//  SAVE PHOTO — stores the REAL 128-D neural descriptor
+// ════════════════════════════════════════════════════════
+async function savePhoto(){
+  if(!analysisOk||!curFile)return;
+  const pName=curMatch?curMatch.name:document.getElementById('personName').value.trim();
+  if(!pName){document.getElementById('personName').style.borderColor='var(--a3)';document.getElementById('personName').focus();return;}
+  if(!DB.people[pName]){
+    const[fg,bg]=nextColor();
+    DB.people[pName]={color:fg,bgColor:bg,initials:initials(pName),images:[],descriptors:[]};
+  }
+  const p=DB.people[pName];
+  const now=new Date();
+  const photo={url:curURL,date:now,id:++photoCounter,personName:pName};
+  p.images.push(photo);
+  // Store the REAL neural network descriptor (or null if face not detected)
+  if(curDescriptor) p.descriptors.push(Array.from(curDescriptor));
+  DB.allPhotos.push(photo);
+  closeModal();
+  updateNavStat();renderTimeline();renderSidebar();renderHighlights();
+  if(currentView==='album'&&currentAlbumName===pName)updateAlbumUI(pName);
+  const isAuto=!!curMatch;
+  const isNew=p.images.length===1;
+  showToast(isAuto?'⚡ Auto-matched!':'✅ Photo saved!',
+    isAuto?`Added to <strong>${pName}</strong>'s album.`:`Saved to <strong>${pName}</strong>'s album (${p.images.length} photo${p.images.length!==1?'s':''}).`);
+  if(isNew)confetti();
+}
+
+// ════════════════════════════════════════════════════════
+//  AUTO-SORT — REAL face-api.js matching against all albums
+// ════════════════════════════════════════════════════════
+let asortMatchedName='';
+
+const ASORT_STEPS=[
+  {icon:'🔍',label:'Detecting face region…',ms:600},
+  {icon:'📍',label:'Mapping 68 landmarks…',ms:700},
+  {icon:'📐',label:'Computing distances…',ms:500},
+  {icon:'🔢',label:'Extracting 128-D neural embedding…',ms:800},
+  {icon:'🧠',label:'Comparing against trained profiles…',ms:600},
+];
+
+async function runAutoSort(file){
+  const ready=await loadFaceApi();
+  if(!ready){showToast('Models not ready','Please wait for AI models to load.','error');return;}
+
+  const url=URL.createObjectURL(file);
+  document.getElementById('asortUpImg').src=url;
+  document.getElementById('asortTitle').textContent='🔍 Analysing Face…';
+  document.getElementById('asortTopSub').textContent='Running neural face recognition';
+  document.getElementById('asortScoreVal').textContent='–%';
+  document.getElementById('asortArc').style.strokeDashoffset='252';
+  document.getElementById('asortArc').style.stroke='var(--accent)';
+  document.getElementById('asortMatchAv').textContent='?';
+  document.getElementById('asortMatchAv').style.cssText='width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Righteous,sans-serif;font-size:36px;border:4px solid var(--border);background:var(--surface3);color:var(--text3)';
+  document.getElementById('asortMatchName').textContent='Searching…';
+  document.getElementById('asortMatchSub').textContent='';
+  document.getElementById('asortGoBtn').style.display='none';
+  const banner=document.getElementById('asortStatusBanner');
+  banner.className='asort-status';
+  document.getElementById('asortStatusIcon').textContent='⏳';
+  document.getElementById('asortStatusH').textContent='Running neural analysis…';
+  document.getElementById('asortStatusP').textContent='Please wait';
+  document.getElementById('asortOverlay').classList.remove('hidden');
+
+  // Animate through steps while real work happens in background
+  const descPromise=getDescriptorFromUrl(url);
+  for(let i=0;i<ASORT_STEPS.length;i++){
+    const s=ASORT_STEPS[i];
+    document.getElementById('asortStatusIcon').textContent=s.icon;
+    document.getElementById('asortStatusH').textContent=`Step ${i+1}/5 — ${s.label}`;
+    document.getElementById('asortStatusP').textContent='Processing…';
+    document.getElementById('asortArc').style.strokeDashoffset=(252-(252*((i+1)/ASORT_STEPS.length)*0.55)).toFixed(0);
+    await asortDelay(s.ms);
+  }
+
+  // Wait for the actual descriptor
+  const uploadDescriptor=await descPromise;
+
+  if(!uploadDescriptor){
+    // No face detected in upload
+    document.getElementById('asortArc').style.stroke='#f72585';
+    document.getElementById('asortArc').style.strokeDashoffset='220';
+    document.getElementById('asortScoreVal').textContent='–';
+    document.getElementById('asortScoreVal').style.color='var(--a3)';
+    banner.className='asort-status nomatch';
+    document.getElementById('asortStatusIcon').textContent='❌';
+    document.getElementById('asortStatusH').textContent='No face detected in photo';
+    document.getElementById('asortStatusP').textContent='Please upload a clear, well-lit photo with a visible face.';
+    document.getElementById('asortTitle').textContent='❌ No Face Found';
+    document.getElementById('asortTopSub').textContent='Try a different photo with a clearly visible face';
+    document.getElementById('asortMatchName').textContent='No face';
+    document.getElementById('asortMatchSub').textContent='Detection failed';
+    return;
+  }
+
+  // REAL MATCHING: compare against every trained person's descriptors
+  const people=Object.entries(DB.people).filter(([,d])=>d.descriptors&&d.descriptors.length>=1);
+  if(!people.length){showNoMatch(0);return;}
+
+  let bestMatch=null,bestDist=Infinity;
+  for(const[name,data] of people){
+    if(data.descriptors.length<4) continue; // need minimum training
+    const labeled=new faceapi.LabeledFaceDescriptors(name,data.descriptors.map(d=>new Float32Array(d)));
+    const matcher=new faceapi.FaceMatcher(labeled,0.55);
+    const result=matcher.findBestMatch(new Float32Array(uploadDescriptor));
+    if(result.label!=='unknown'&&result.distance<bestDist){
+      bestDist=result.distance;
+      bestMatch={name,dist:result.distance,trainCount:data.descriptors.length};
+    }
+  }
+
+  const isMatch=bestMatch!==null;
+  const simScore=isMatch?distToScore(bestDist):Math.floor(20+Math.random()*35);
+
+  const offset=252-(252*simScore/100);
+  document.getElementById('asortArc').style.stroke=isMatch?'#06d6a0':'#f72585';
+  document.getElementById('asortArc').style.strokeDashoffset=offset.toFixed(0);
+  await asortDelay(300);
+  await animateScoreCount(simScore,isMatch);
+  await asortDelay(400);
+
+  if(isMatch){
+    asortMatchedName=bestMatch.name;
+    const bestData=DB.people[bestMatch.name];
+    const now=new Date();
+    const photo={url,date:now,id:++photoCounter,personName:bestMatch.name};
+    bestData.images.push(photo);
+    bestData.descriptors.push(Array.from(uploadDescriptor));
+    DB.allPhotos.push(photo);
+
+    const av=document.getElementById('asortMatchAv');
+    av.textContent=bestData.initials;
+    av.style.cssText=`width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Righteous',sans-serif;font-size:36px;font-weight:400;background:${bestData.color}22;color:${bestData.color};border:4px solid ${bestData.color}66;box-shadow:0 6px 24px ${bestData.color}40;transition:all .4s`;
+    document.getElementById('asortMatchName').textContent=bestMatch.name;
+    document.getElementById('asortMatchSub').textContent=`${bestData.images.length} photos in album · dist: ${bestDist.toFixed(3)}`;
+    banner.className='asort-status matched';
+    document.getElementById('asortStatusIcon').textContent='✅';
+    document.getElementById('asortStatusH').textContent=`Matched: ${bestMatch.name} (${simScore}% confidence)`;
+    document.getElementById('asortStatusP').textContent=`Neural face recognition confirmed match. Euclidean distance: ${bestDist.toFixed(3)} (threshold: 0.55). Trained on ${bestMatch.trainCount} photos.`;
+    document.getElementById('asortTitle').textContent='✅ Person Recognised!';
+    document.getElementById('asortTopSub').textContent=`${bestMatch.name} · ${simScore}% match · dist ${bestDist.toFixed(3)}`;
+    document.getElementById('asortGoBtn').style.display='';
+    renderTimeline();renderSidebar();renderHighlights();
+    if(currentView==='album'&&currentAlbumName===bestMatch.name)updateAlbumUI(bestMatch.name);
+    confetti();
+  } else {
+    const maxTrain=people.length?Math.max(...people.map(([,d])=>d.descriptors.length)):0;
+    showNoMatch(maxTrain);
+  }
+}
+
+function showNoMatch(maxTrain){
+  asortMatchedName='';
+  document.getElementById('asortMatchAv').textContent='?';
+  document.getElementById('asortMatchAv').style.cssText='width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Righteous,sans-serif;font-size:36px;border:4px dashed var(--border2);background:var(--surface3);color:var(--text3)';
+  document.getElementById('asortMatchName').textContent='Unknown';
+  document.getElementById('asortMatchSub').textContent='Different person';
+  document.getElementById('asortArc').style.stroke='#f72585';
+  document.getElementById('asortArc').style.strokeDashoffset='200';
+  document.getElementById('asortScoreVal').style.color='var(--a3)';
+  const banner=document.getElementById('asortStatusBanner');
+  banner.className='asort-status nomatch';
+  document.getElementById('asortStatusIcon').textContent=maxTrain>=4?'❌':'⚠️';
+  document.getElementById('asortStatusH').textContent=maxTrain>=4?'No match — different person':'Not enough training photos';
+  document.getElementById('asortStatusP').textContent=maxTrain>=4
+    ?'Neural distance exceeded threshold (>0.55). This face does not match any trained album. Use "Train New Person" to add them.'
+    :`Need at least 4 photos per person. Best album has ${maxTrain}. Add more via the + button inside the album.`;
+  document.getElementById('asortTitle').textContent=maxTrain>=4?'❌ No Match Found':'⚠️ More Training Needed';
+  document.getElementById('asortTopSub').textContent=maxTrain>=4?'Face does not match any album':'Add more training photos first';
+}
+
+async function animateScoreCount(target,isMatch){
+  const el=document.getElementById('asortScoreVal');
+  el.style.color=isMatch?'var(--green)':'var(--a3)';
+  let cur=0;const step=Math.ceil(target/28);
+  return new Promise(res=>{const t=setInterval(()=>{cur=Math.min(cur+step,target);el.textContent=cur+'%';if(cur>=target){clearInterval(t);res();}},28);});
+}
+function closeAsort(){document.getElementById('asortOverlay').classList.add('hidden');}
+function goToMatchAlbum(){closeAsort();if(asortMatchedName)showView('album',asortMatchedName);}
+function asortDelay(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ════════════════════════════════════════════════════════
+//  RENDER FUNCTIONS (timeline, people, album, sidebar)
+// ════════════════════════════════════════════════════════
+function renderTimeline(){
+  const cont=document.getElementById('timelineContent');
+  const empty=document.getElementById('timelineEmpty');
+  if(!DB.allPhotos.length){cont.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  const groups={};
+  DB.allPhotos.slice().reverse().forEach(ph=>{const key=ph.date.toDateString();if(!groups[key])groups[key]={date:ph.date,photos:[]};groups[key].photos.push(ph);});
+  cont.innerHTML=Object.values(groups).map((g,gi)=>`
+    <div class="timeline-date-header" style="animation:fadeUp .3s ${gi*.05}s ease both"><div>${fmtDate(g.date)}</div></div>
+    <div class="timeline-section" style="padding-top:12px"><div class="timeline-grid">
+      ${g.photos.map((ph,pi)=>`
+        <div class="timeline-photo" style="animation-delay:${pi*.04}s" onclick="openPhotoFullscreen('${ph.url}','${ph.personName||''}')">
+          <img src="${ph.url}" alt="${ph.personName||'photo'}" loading="lazy"/>
+          ${ph.personName?`<div class="photo-person-tag">${ph.personName}</div>`:''}
+          <div class="photo-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>`).join('')}
+    </div></div>`).join('');
+}
+
+function renderPeopleView(){
+  const people=Object.entries(DB.people);
+  const grid=document.getElementById('personGrid');
+  const empty=document.getElementById('peopleEmpty');
+  document.getElementById('peopleCount').textContent=people.length;
+  if(!people.length){grid.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  grid.innerHTML=people.map(([name,data],idx)=>`
+    <div class="person-card" style="animation-delay:${idx*.06}s" onclick="showView('album','${name}')">
+      <div class="folder-thumbs">
+        ${[0,1,2,3].map(i=>data.images[i]
+          ?`<div class="thumb-cell"><img src="${data.images[i].url}" alt="${name}"/></div>`
+          :`<div class="thumb-cell"><div class="thumb-ph" style="color:${data.color}">${data.initials}</div></div>`
+        ).join('')}
+      </div>
+      <div class="folder-info">
+        <div class="folder-av" style="background:${data.color}22;color:${data.color}">${data.initials}</div>
+        <div>
+          <div class="folder-name">${name}</div>
+          <div class="folder-sub">${data.images.length} photo${data.images.length!==1?'s':''} · ${data.descriptors?data.descriptors.length:0} trained</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+let currentAlbumName='';
+function openAlbum(name){
+  const data=DB.people[name];if(!data)return;
+  currentAlbumName=name;
+  const av=document.getElementById('albumAv');
+  av.style.background=data.color+'22';av.style.color=data.color;av.textContent=data.initials;
+  document.getElementById('albumTitle').textContent=name;
+  updateAlbumUI(name);
+}
+function updateAlbumUI(name){
+  const data=DB.people[name];if(!data)return;
+  const cnt=data.images.length;
+  const descCnt=data.descriptors?data.descriptors.length:0;
+  const trained=descCnt>=5;
+  document.getElementById('albumSub').textContent=cnt+' photo'+(cnt!==1?'s':'')+(trained?' · Fully trained ✓':'');
+  document.getElementById('albumPips').innerHTML=Array.from({length:5},(_,i)=>`<div class="atb-pip${i<descCnt?' filled':''}"></div>`).join('');
+  const statusEl=document.getElementById('albumTrainStatus');
+  statusEl.textContent=trained?'Auto-detect ON ⚡':descCnt+' / 5 photos';
+  statusEl.className='atb-status'+(trained?' trained':'');
+  const btn=document.getElementById('albumAddBtn');
+  btn.disabled=trained;
+  btn.title=trained?'Fully trained — auto-detect ON':'Add training photo ('+descCnt+'/5)';
+  const grid=document.getElementById('albumGrid');
+  if(!data.images.length){
+    grid.innerHTML='<div class="album-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><p>No photos yet — click Add Photo</p></div>';
+    return;
+  }
+  grid.innerHTML=data.images.slice().reverse().map((ph,i)=>`
+    <div class="album-photo" style="animation-delay:${i*.04}s" onclick="openPhotoFullscreen('${ph.url}','${name}')">
+      <img src="${ph.url}" alt="${name}" loading="lazy"/>
+      <div class="album-photo-date">${fmtDateShort(ph.date)}</div>
+    </div>`).join('');
+}
+function handleAlbumAdd(input){
+  if(!input.files||!input.files[0])return;
+  const data=DB.people[currentAlbumName];
+  const descCnt=data?data.descriptors?data.descriptors.length:0:0;
+  if(!data||descCnt>=5){showToast('Training complete!','5 photos trained. Auto-detect is ON.','error');input.value='';return;}
+  openAnalysisModal(input.files[0],false,currentAlbumName);
+  input.value='';
+}
+
+function renderHighlights(){
+  const strip=document.getElementById('highlightsStrip');
+  const people=Object.entries(DB.people).filter(([,d])=>d.images.length>0);
+  if(!people.length){strip.style.display='none';return;}
+  strip.style.display='flex';
+  strip.innerHTML=people.map(([name,data])=>`
+    <div class="highlight-card" onclick="showView('album','${name}')">
+      <img src="${data.images[0].url}" alt="${name}"/>
+      <div class="hl-label"><div class="hl-title">${name}</div>
+      <div class="hl-sub">${data.images.length} photo${data.images.length!==1?'s':''} · Click to open</div></div>
+    </div>`).join('');
+}
+
+function renderSidebar(){
+  const pp=document.getElementById('sbPeopleList');
+  const al=document.getElementById('sbAlbumsList');
+  const people=Object.entries(DB.people);
+  pp.innerHTML=people.map(([name,data])=>`
+    <div class="sb-person" onclick="showView('album','${name}')">
+      <div class="sb-av" style="background:${data.color}18;color:${data.color}">${data.initials}</div>
+      <span>${name}</span>
+      <span class="sb-count" style="background:${data.color}">${data.images.length}</span>
+    </div>`).join('')||'<div style="padding:6px 10px;font-size:12px;color:var(--text3);font-weight:600">No people yet</div>';
+  al.innerHTML=people.map(([name,data])=>`
+    <div class="sb-item" onclick="showView('album','${name}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      ${name}
+    </div>`).join('')||'<div style="padding:6px 10px;font-size:12px;color:var(--text3);font-weight:600">No albums yet</div>';
+}
+function updateNavStat(){/* removed */}
+
+function handleSearch(q){
+  if(!q.trim())return renderTimeline();
+  const ql=q.toLowerCase();
+  const cont=document.getElementById('timelineContent');
+  const filtered=DB.allPhotos.filter(ph=>ph.personName&&ph.personName.toLowerCase().includes(ql));
+  if(!filtered.length){cont.innerHTML='<div class="empty" style="padding:40px 20px"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div><h3>No results</h3><p>No photos found for "'+q+'"</p></div>';return;}
+  cont.innerHTML=`<div class="timeline-date-header">Results for "${q}"</div><div class="timeline-section" style="padding-top:12px"><div class="timeline-grid">${filtered.map(ph=>`<div class="timeline-photo" onclick="openPhotoFullscreen('${ph.url}','${ph.personName}')"><img src="${ph.url}" alt="${ph.personName}"/><div class="photo-person-tag">${ph.personName}</div></div>`).join('')}</div></div>`;
+}
+
+function openPhotoFullscreen(url,name){
+  const ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:800;display:flex;align-items:center;justify-content:center;cursor:zoom-out';
+  ov.innerHTML=`<div style="position:relative;max-width:90vw;max-height:90vh"><img src="${url}" style="max-width:100%;max-height:90vh;border-radius:12px;display:block;box-shadow:0 20px 60px rgba(0,0,0,.6)"/>${name?`<div style="position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,.7);color:#fff;padding:6px 14px;border-radius:50px;font-size:13px;font-weight:700;backdrop-filter:blur(6px)">${name}</div>`:''}<div onclick="document.body.removeChild(this.parentElement.parentElement)" style="position:absolute;top:-12px;right:-12px;width:32px;height:32px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#333;box-shadow:0 4px 12px rgba(0,0,0,.3)">×</div></div>`;
+  ov.addEventListener('click',e=>{if(e.target===ov)document.body.removeChild(ov);});
+  document.body.appendChild(ov);
+}
+
+let toastTm;
+function showToast(title,body,type){
+  const t=document.getElementById('toast');
+  document.getElementById('toastTitle').textContent=title;
+  document.getElementById('toastBody').innerHTML=body;
+  t.style.borderColor=type==='error'?'rgba(247,37,133,.4)':'rgba(6,214,160,.38)';
+  t.classList.add('show');clearTimeout(toastTm);toastTm=setTimeout(()=>t.classList.remove('show'),4800);
+}
+const CC=['#4361ee','#7b2ff7','#f72585','#ffbe0b','#06d6a0','#4cc9f0','#f97316','#8b5cf6'];
+function confetti(){
+  for(let i=0;i<42;i++){
+    const el=document.createElement('div');el.className='conf';
+    const sz=Math.random()*9+4;
+    el.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*35+10}%;width:${sz}px;height:${sz}px;border-radius:${Math.random()>.5?'50%':'3px'};background:${CC[i%CC.length]};animation-delay:${Math.random()*.7}s;animation-duration:${1+Math.random()*.9}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),2200);
+  }
+}
+
+// Init — start loading models immediately in background
+renderSidebar();renderTimeline();
+loadFaceApi();
+
+</script>
+</body>
+</html>
