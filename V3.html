@@ -58,7 +58,7 @@ nav::after{
 .nav-logo-area{display:flex;align-items:center;gap:10px;flex-shrink:0;z-index:1}
 .moments-by-text{
   font-family:'Pacifico',cursive;
-  font-size:34px;
+  font-size:28px;
   font-weight:400;
   letter-spacing:.5px;
   white-space:nowrap;
@@ -74,14 +74,14 @@ nav::after{
 .cogno-logo-wrap{display:flex;flex-direction:column;align-items:flex-start}
 .cogno-by{font-size:8px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:2px}
 .cogno-brand{display:flex;align-items:center;gap:7px}
-.cogno-logo-img{height:36px;width:auto;object-fit:contain;display:block}
+.cogno-logo-img{height:30px;width:auto;object-fit:contain;display:block}
 .cogno-logo-fallback{
-  height:36px;padding:0 12px;background:linear-gradient(135deg,#4361ee,#f72585);
-  border-radius:9px;display:flex;align-items:center;justify-content:center;
-  font-family:'Righteous',sans-serif;font-size:14px;color:#fff;letter-spacing:.3px;gap:6px;
+  height:30px;padding:0 10px;background:linear-gradient(135deg,#4361ee,#f72585);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-family:'Righteous',sans-serif;font-size:12px;color:#fff;letter-spacing:.3px;gap:5px;
 }
-.cogno-name{font-family:'Righteous',sans-serif;font-size:16px;color:#fff;font-weight:400;letter-spacing:.3px}
-.cogno-name em{font-style:normal;font-size:10px;color:rgba(255,255,255,.5);display:block;letter-spacing:1px;margin-top:-1px}
+.cogno-name{font-family:'Righteous',sans-serif;font-size:14px;color:#fff;font-weight:400;letter-spacing:.3px}
+.cogno-name em{font-style:normal;font-size:9px;color:rgba(255,255,255,.5);display:block;letter-spacing:1px;margin-top:-1px}
 
 .nav-search{
   flex:1;max-width:360px;margin-left:8px;z-index:1;
@@ -544,7 +544,7 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
   /* NAV */
   nav{height:auto;min-height:56px;padding:8px 14px;flex-wrap:nowrap;gap:8px}
   .nav-logo-area{flex-shrink:0;gap:6px}
-  .moments-by-text{font-size:24px}
+  .moments-by-text{font-size:20px}
   .cosmos-divider{height:24px;margin:0 4px}
   .cogno-by{display:none}
   .cogno-name em{display:none}
@@ -618,8 +618,8 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
 
 /* ── Large phone (≤ 480px) ── */
 @media(max-width:480px){
-  .moments-by-text{font-size:19px;letter-spacing:0}
-  .cogno-logo-img,.cogno-logo-fallback{height:28px}
+  .moments-by-text{font-size:17px;letter-spacing:0}
+  .cogno-logo-img,.cogno-logo-fallback{height:24px}
   .nav-search{max-width:140px}
 
   .timeline-grid{grid-template-columns:repeat(3,1fr);gap:2px}
@@ -646,7 +646,7 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
 /* ── Small phone (≤ 360px) ── */
 @media(max-width:360px){
   nav{padding:6px 10px}
-  .moments-by-text{font-size:15px}
+  .moments-by-text{font-size:14px}
   .nav-search{display:none}
   .timeline-grid{grid-template-columns:repeat(2,1fr)}
   .person-grid{grid-template-columns:1fr 1fr}
@@ -737,31 +737,23 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
 
 /* Logo area */
 .auth-logo-area{text-align:center;margin-bottom:30px;animation:authLogoFloat 3s ease-in-out infinite}
-.auth-logo-link{
-  display:inline-block;text-decoration:none;
-  transition:transform .22s cubic-bezier(.34,1.56,.64,1);
-  cursor:pointer;
-}
-.auth-logo-link:hover{transform:scale(1.05)}
-.auth-logo-link:hover .auth-moments{filter:drop-shadow(0 4px 16px rgba(236,72,153,.35))}
 .auth-moments{
-  font-family:'Pacifico',cursive;font-size:52px;font-weight:400;
+  font-family:'Pacifico',cursive;font-size:40px;font-weight:400;
   background:linear-gradient(110deg,#f59e0b 0%,#f97316 22%,#ec4899 50%,#8b5cf6 78%,#4361ee 100%);
   background-size:250% auto;
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   animation:momentsShimmer 5s ease-in-out infinite;
   filter:drop-shadow(0 2px 10px rgba(236,72,153,.2));
-  display:block;margin-bottom:8px;line-height:1.1;
+  display:block;margin-bottom:6px;line-height:1.1;
 }
 .auth-by{
-  font-size:14px;color:#6b7280;font-weight:600;letter-spacing:.3px;
-  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:13px;color:#6b7280;font-weight:600;letter-spacing:.3px;
+  display:flex;align-items:center;justify-content:center;gap:5px;
 }
-.auth-logo-img{height:28px;width:auto;vertical-align:middle;opacity:.9;transition:opacity .2s}
-.auth-logo-link:hover .auth-logo-img{opacity:1}
+.auth-logo-img{height:20px;width:auto;vertical-align:middle;opacity:.85}
 .auth-logo-fallback{
-  display:inline-flex;align-items:center;gap:5px;
-  font-family:'Righteous',sans-serif;font-size:15px;
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:'Righteous',sans-serif;font-size:13px;
   color:#4361ee;letter-spacing:.3px;font-weight:400;
 }
 
@@ -951,18 +943,16 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
   </div>
   <div class="auth-card">
     <div class="auth-logo-area">
-      <a href="https://www.cognospace.in" target="_blank" class="auth-logo-link">
-        <span class="auth-moments">Moments</span>
-        <div class="auth-by">
-          <span>by</span>
-          <img src="cognospace_logo2.png" alt="CognoSpace" class="auth-logo-img"
-            onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'"/>
-          <span class="auth-logo-fallback" style="display:none">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
-            CognoSpace
-          </span>
-        </div>
-      </a>
+      <span class="auth-moments">Moments</span>
+      <div class="auth-by">
+        <span>by</span>
+        <img src="cognospace_logo2.png" alt="CognoSpace" class="auth-logo-img"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'"/>
+        <span class="auth-logo-fallback" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+          CognoSpace
+        </span>
+      </div>
     </div>
     <div class="auth-tabs">
       <button class="auth-tab active" id="loginTab" onclick="switchAuthTab('login')">Sign In</button>
