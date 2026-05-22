@@ -44,13 +44,14 @@ body{display:flex;flex-direction:column}
 nav{
   height:58px;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1a1d3a 100%);
   display:flex;align-items:center;padding:0 20px;gap:14px;
-  flex-shrink:0;z-index:200;position:relative;overflow:hidden;
+  flex-shrink:0;z-index:200;position:relative;overflow:visible;
   box-shadow:0 3px 20px rgba(26,29,58,.4);
 }
 nav::after{
   content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
   animation:nav-shine 5s ease-in-out infinite;pointer-events:none;
+  clip-path:inset(0);
 }
 @keyframes momentsShimmer{0%{background-position:0% center}60%{background-position:100% center}100%{background-position:0% center}}
 
@@ -858,24 +859,50 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
 
 /* Nav user pill */
 .nav-user-pill{
-  display:flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:50px;
-  background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);
-  color:#fff;font-family:'Nunito',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;
-  transition:all .2s;position:relative;
+  display:flex;align-items:center;gap:8px;height:36px;padding:0 10px 0 6px;border-radius:50px;
+  background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.22);
+  color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;
+  transition:all .2s;position:relative;user-select:none;
 }
-.nav-user-pill:hover{background:rgba(255,255,255,.18)}
-.nav-user-dot{width:8px;height:8px;border-radius:50%;background:#06d6a0;flex-shrink:0}
+.nav-user-pill:hover{background:rgba(255,255,255,.2)}
+.nav-user-avatar{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--a2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:#fff;
+}
+.nav-pill-chevron{transition:transform .2s;flex-shrink:0}
+.nav-user-pill.open .nav-pill-chevron{transform:rotate(180deg)}
 .nav-user-menu{
-  position:absolute;top:calc(100% + 8px);right:0;background:var(--surface);
-  border:1.5px solid var(--border);border-radius:14px;padding:6px;
-  min-width:160px;box-shadow:0 12px 40px rgba(0,0,0,.15);z-index:500;
-  display:none;animation:fadeUp .18s ease;
+  position:absolute;top:calc(100% + 10px);right:0;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:18px;padding:6px;
+  min-width:230px;box-shadow:0 16px 48px rgba(26,29,58,.18);z-index:9999;
+  display:none;animation:popIn .2s cubic-bezier(.34,1.56,.64,1);
 }
-.nav-user-pill:focus-within .nav-user-menu,
 .nav-user-pill.open .nav-user-menu{display:block}
+/* Profile header */
+.num-header{display:flex;align-items:center;gap:11px;padding:10px 10px 8px}
+.num-avatar{
+  width:42px;height:42px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--a2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Righteous',sans-serif;font-size:17px;color:#fff;font-weight:400;
+  box-shadow:0 4px 14px rgba(67,97,238,.35);
+}
+.num-info{flex:1;min-width:0}
+.num-name{font-size:14px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.num-sub{font-size:11px;color:var(--text3);font-weight:600;margin-top:1px}
+.num-divider{height:1px;background:var(--border);margin:4px 0}
+/* Stats */
+.num-stats{display:flex;align-items:center;padding:8px 6px}
+.num-stat{flex:1;text-align:center}
+.num-stat-val{font-family:'Righteous',sans-serif;font-size:18px;color:var(--accent);font-weight:400}
+.num-stat-lbl{font-size:10.5px;color:var(--text3);font-weight:700;margin-top:1px}
+.num-stat-sep{width:1px;height:28px;background:var(--border)}
+/* Menu items */
 .nav-user-menu-item{
-  padding:9px 12px;border-radius:9px;font-size:13px;font-weight:700;color:var(--text2);
-  cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s;
+  padding:9px 12px;border-radius:10px;font-size:13px;font-weight:700;color:var(--text2);
+  cursor:pointer;display:flex;align-items:center;gap:9px;transition:background .15s;
 }
 .nav-user-menu-item:hover{background:var(--surface3);color:var(--text)}
 .nav-user-menu-item.danger{color:#f87171}
@@ -1071,13 +1098,51 @@ footer{flex-shrink:0;background:linear-gradient(135deg,#1a1d3a 0%,#2d2060 55%,#1
     </button>
     <input type="file" id="navUploadInput" accept="image/*" style="display:none" onchange="handleNavUploadFile(this)"/>
     <input type="file" id="trainUploadInput" accept="image/*" style="display:none" onchange="handleTrainFile(this)"/>
-    <!-- User Pill -->
+    <!-- User Pill with rich dropdown -->
     <div class="nav-user-pill" id="navUserPill" onclick="toggleUserMenu(this)">
-      <div class="nav-user-dot"></div>
+      <div class="nav-user-avatar" id="navUserAvatar">U</div>
       <span id="navUserName">User</span>
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="nav-user-menu">
-        <div class="nav-user-menu-item" onclick="event.stopPropagation();doLogout()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="nav-pill-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+      <!-- Dropdown -->
+      <div class="nav-user-menu" id="navUserMenu" onclick="event.stopPropagation()">
+        <!-- Profile header -->
+        <div class="num-header">
+          <div class="num-avatar" id="numAvatar">U</div>
+          <div class="num-info">
+            <div class="num-name" id="numName">User</div>
+            <div class="num-sub">Moments account</div>
+          </div>
+        </div>
+        <div class="num-divider"></div>
+        <!-- Stats row -->
+        <div class="num-stats">
+          <div class="num-stat">
+            <div class="num-stat-val" id="numStatPhotos">0</div>
+            <div class="num-stat-lbl">Photos</div>
+          </div>
+          <div class="num-stat-sep"></div>
+          <div class="num-stat">
+            <div class="num-stat-val" id="numStatPeople">0</div>
+            <div class="num-stat-lbl">People</div>
+          </div>
+          <div class="num-stat-sep"></div>
+          <div class="num-stat">
+            <div class="num-stat-val" id="numStatTrained">0</div>
+            <div class="num-stat-lbl">Trained</div>
+          </div>
+        </div>
+        <div class="num-divider"></div>
+        <!-- Menu items -->
+        <div class="nav-user-menu-item" onclick="showView('people')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+          My Albums
+        </div>
+        <div class="nav-user-menu-item" onclick="openTrainNew()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+          Train New Person
+        </div>
+        <div class="num-divider"></div>
+        <div class="nav-user-menu-item danger" onclick="doLogout()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
           Sign Out
         </div>
@@ -1929,6 +1994,9 @@ async function savePhoto(){
   showToast(isAuto?'⚡ Auto-matched!':'✅ Photo saved!',
     isAuto?`Added to <strong>${pName}</strong>'s album.`:`Saved to <strong>${pName}</strong>'s album (${p.images.length} photo${p.images.length!==1?'s':''}).`);
   if(isNew)confetti();
+  // Save immediately after every photo so data is never lost
+  saveCurrentUserData();
+  refreshDropdownStats();
 }
 
 // ════════════════════════════════════════════════════════
@@ -2207,7 +2275,7 @@ function renderSidebar(){
       ${name}
     </div>`).join('')||'<div style="padding:6px 10px;font-size:12px;color:var(--text3);font-weight:600">No albums yet</div>';
 }
-function updateNavStat(){updateSortChip();}
+function updateNavStat(){updateSortChip();refreshDropdownStats();}
 // Call on init
 window.addEventListener('DOMContentLoaded',()=>setTimeout(updateSortChip,500));
 
@@ -2348,17 +2416,63 @@ function doRegister() {
   auth[u] = btoa(p);
   setAuthStore(auth);
   setRegErr('');
-  loginUser(u);
+  // Show success and redirect to login tab — user must log in manually
+  showRegSuccess(u);
+}
+
+function showRegSuccess(username) {
+  // Show a brief success banner on the register form
+  const errEl = document.getElementById('regErr');
+  const errTxt = document.getElementById('regErrText');
+  const errIcon = document.getElementById('regErrIcon');
+  if(errTxt) errTxt.textContent = '✅ Account created! Please sign in.';
+  if(errIcon) errIcon.style.display = 'none';
+  if(errEl){
+    errEl.style.display = 'flex';
+    errEl.style.color = 'var(--green)';
+  }
+  // Pre-fill username on login form
+  const loginUserEl = document.getElementById('loginUser');
+  if(loginUserEl) loginUserEl.value = username;
+  // Switch to login tab after 1.2 seconds
+  setTimeout(() => {
+    switchAuthTab('login');
+    if(errEl){ errEl.style.display='none'; errEl.style.color=''; }
+    // Focus password field since username is pre-filled
+    const loginPassEl = document.getElementById('loginPass');
+    if(loginPassEl) loginPassEl.focus();
+  }, 1200);
 }
 
 function loginUser(username) {
   currentUser = username;
   localStorage.setItem('moments_session', username);
   document.getElementById('authOverlay').classList.add('hidden');
+  // Set name everywhere
   document.getElementById('navUserName').textContent = username;
-  // Load user's saved data
+  // Set avatars (first 2 initials, uppercase)
+  const av = username.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const navAv = document.getElementById('navUserAvatar');
+  const numAv = document.getElementById('numAvatar');
+  const numNm = document.getElementById('numName');
+  if(navAv) navAv.textContent = av;
+  if(numAv) numAv.textContent = av;
+  if(numNm) numNm.textContent = username;
   loadUserData();
-  showToast('Welcome back!', 'Signed in as <strong>' + username + '</strong>', 'ok');
+  showToast('Welcome!', 'Signed in as <strong>' + username + '</strong>', 'ok');
+}
+
+// Update dropdown stats (photos, people, trained count)
+function refreshDropdownStats(){
+  const photos = DB.allPhotos.length;
+  const people = Object.keys(DB.people).length;
+  const trained = Object.values(DB.people).filter(d=>(d.descriptors||[]).length>=4).length;
+  const ps = document.getElementById('numStatPhotos');
+  const pp = document.getElementById('numStatPeople');
+  const pt = document.getElementById('numStatTrained');
+  if(ps) ps.textContent = photos;
+  if(pp) pp.textContent = people;
+  if(pt) pt.textContent = trained;
 }
 
 function doLogout() {
@@ -2466,6 +2580,7 @@ function loadUserData() {
     personName: ph.personName,
   }));
   renderTimeline(); renderSidebar(); renderHighlights();
+  updateSortChip(); refreshDropdownStats();
 }
 
 // Auto-save every 30s and on page unload
@@ -2480,6 +2595,14 @@ window.addEventListener('beforeunload', () => { if (currentUser) saveCurrentUser
     currentUser = sess;
     document.getElementById('authOverlay').classList.add('hidden');
     document.getElementById('navUserName').textContent = sess;
+    // Populate avatar
+    const av = sess.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const navAv = document.getElementById('navUserAvatar');
+    const numAv = document.getElementById('numAvatar');
+    const numNm = document.getElementById('numName');
+    if(navAv) navAv.textContent = av;
+    if(numAv) numAv.textContent = av;
+    if(numNm) numNm.textContent = sess;
     loadUserData();
   }
 })();
